@@ -1,0 +1,19 @@
+services:
+  - type: web
+    name: autocfo-backend
+    env: node
+    buildCommand: cd backend && npm install && npm run build
+    startCommand: cd backend && npm start
+    envVars:
+      - key: JWT_SECRET
+        value: autocfo-hackathon-secret-key-2026
+      - key: PORT
+        value: "3001"
+      - key: CORS_ORIGIN
+        value: https://autocfo.vercel.app
+      - key: AI_API_KEY
+        sync: false
+      - key: AI_API_TYPE
+        value: openai
+      - key: AI_MODEL
+        value: gpt-4o
