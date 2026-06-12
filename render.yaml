@@ -2,11 +2,13 @@ services:
   - type: web
     name: autocfo-backend
     env: node
+    region: ohio
     buildCommand: cd backend && npm install && npm run build
     startCommand: cd backend && npm start
+    healthCheckPath: /api/health
     envVars:
       - key: JWT_SECRET
-        value: autocfo-hackathon-secret-key-2026
+        generateValue: true
       - key: PORT
         value: "3001"
       - key: CORS_ORIGIN
@@ -17,3 +19,5 @@ services:
         value: openai
       - key: AI_MODEL
         value: gpt-4o
+      - key: DATABASE_URL
+        value: /data/autocfo.db

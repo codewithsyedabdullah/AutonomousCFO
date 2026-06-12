@@ -26,6 +26,8 @@ async function start() {
   app.use(helmet({ contentSecurityPolicy: false }));
   app.use(express.json());
 
+  app.get('/api/health', (_req, res) => res.json({ status: 'ok', timestamp: new Date().toISOString() }));
+
   app.use('/api/auth', authRoutes);
   app.use('/api/transactions', transactionRoutes);
   app.use('/api/goals', goalRoutes);
