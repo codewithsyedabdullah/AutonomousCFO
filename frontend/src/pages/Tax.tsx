@@ -1,4 +1,4 @@
-import { useState, useEffect, FormEvent } from 'react';
+import { useState, useEffect, FormEvent, useRef } from 'react';
 import { Download, MessageSquare, Save, AlertTriangle, CheckCircle, FileText, Bot, User, Loader2, Receipt, Landmark } from 'lucide-react';
 import client from '../api/client';
 
@@ -47,6 +47,17 @@ export default function Tax() {
   ]);
   const [chatInput, setChatInput] = useState('');
   const [chatLoading, setChatLoading] = useState(false);
+
+  const formatTaxMessage = (content: string) => {
+    return content
+      .replace(/\[SAVE MONEY\]/g, '')
+      .replace(/\[ACTION NEEDED\]/g, '')
+      .replace(/\*\*(.*?)\*\*/g, '<strong class="text-white">$1</strong>')
+      .replace(/\*(.*?)\*/g, '<em class="text-zinc-300">$1</em>')
+      .replace(/`([^`]+)`/g, '<code class="bg-black/40 text-primary text-xs px-1 py-0.5 rounded">$1</code>')
+      .replace(/^- (.+)$/gm, '<li class="text-zinc-300 ml-4 list-disc">$1</li>')
+      .replace(/\n/g, '<br />');
+  };
 
   useEffect(() => {
     fetchData();
@@ -294,9 +305,11 @@ export default function Tax() {
                 <div className={`w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0 ${msg.role === 'user' ? 'bg-primary/20' : 'bg-zinc-800'}`}>
                   {msg.role === 'user' ? <User size={14} className="text-primary" /> : <Bot size={14} className="text-zinc-400" />}
                 </div>
-                <div className={`rounded-xl px-3 py-2 text-sm ${
+                <div className={`rounded-xl px-3 py-2 text-sm leading-relaxed ${
                   msg.role === 'user' ? 'bg-primary/10 text-zinc-200 border border-primary/20' : 'bg-zinc-800/50 text-zinc-300 border border-zinc-800'
-                }`}>{msg.content}</div>
+                }`}>
+                  {msg.role === 'user' ? msg.content : <span dangerouslySetInnerHTML={{ __html: formatTaxMessage(msg.content) }} />}
+                </div>
               </div>
             </div>
           ))}

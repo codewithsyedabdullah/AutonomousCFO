@@ -57,10 +57,10 @@ function buildSnapshot(userId: string): string {
 
   return `
 User's Financial Snapshot (as of ${today}):
-- Net Worth: $${Math.round(netWorth * 100) / 100}
-- Monthly Income (avg): $${Math.round(avgIncome * 100) / 100}
-- Monthly Expenses (avg): $${Math.round(avgExpenses * 100) / 100}
-- Top Spending Category: ${topCat ? `${topCat.category} — $${Math.round(topCat.total * 100) / 100}/month` : 'N/A'}
+- Net Worth: PKR ${Math.round(netWorth * 100) / 100}
+- Monthly Income (avg): PKR ${Math.round(avgIncome * 100) / 100}
+- Monthly Expenses (avg): PKR ${Math.round(avgExpenses * 100) / 100}
+- Top Spending Category: ${topCat ? `${topCat.category} — PKR ${Math.round(topCat.total * 100) / 100}/month` : 'N/A'}
 - Savings Rate: ${Math.round(savingsRate * 100) / 100}%
 - Health Score: ${healthScore ? `${healthScore.composite}/100 (${healthScore.label} risk)` : 'N/A'}
 ${goalLine}
@@ -102,8 +102,9 @@ ${snapshot}
 
 Rules:
 1. Reference the user's specific numbers in every answer
-2. Be concise unless asked for detail
-3. Proactively flag if savings rate < 10% or debt is mentioned`;
+2. Always use PKR currency (not USD/$)
+3. Be concise unless asked for detail
+4. Proactively flag if savings rate < 10% or debt is mentioned`;
 
     const isMock = config.AI_API_KEY === 'sk-placeholder-replace-with-real-key';
 
@@ -111,7 +112,7 @@ Rules:
       const userMsg = { role: 'user', content: message };
       const assistantMsg = {
         role: 'assistant',
-        content: `📊 **CFO Analysis**\n\nBased on your financial snapshot:\n- Your net worth is $${snapshot.match(/Net Worth: \$([\d.]+)/)?.[1] || 'N/A'}\n- Monthly income is $${snapshot.match(/Monthly Income \(avg\): \$([\d.]+)/)?.[1] || 'N/A'} vs expenses of $${snapshot.match(/Monthly Expenses \(avg\): \$([\d.]+)/)?.[1] || 'N/A'}\n- Your savings rate is ${snapshot.match(/Savings Rate: ([\d.]+)%/)?.[1] || 'N/A'}%\n\n*This is a mock response. Configure a real AI_API_KEY in .env to get AI-powered insights.*`,
+        content: `📊 **CFO Analysis**\n\nBased on your financial snapshot:\n- Your net worth is PKR ${snapshot.match(/Net Worth: PKR ([\d.]+)/)?.[1] || 'N/A'}\n- Monthly income is PKR ${snapshot.match(/Monthly Income \(avg\): PKR ([\d.]+)/)?.[1] || 'N/A'} vs expenses of PKR ${snapshot.match(/Monthly Expenses \(avg\): PKR ([\d.]+)/)?.[1] || 'N/A'}\n- Your savings rate is ${snapshot.match(/Savings Rate: ([\d.]+)%/)?.[1] || 'N/A'}%\n\n*This is a mock response. Configure a real AI_API_KEY in .env to get AI-powered insights.*`,
       };
 
       messages.push(userMsg, assistantMsg);

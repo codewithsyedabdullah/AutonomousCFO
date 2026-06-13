@@ -306,10 +306,10 @@ Missed Deductions Spotted:
 ${missedDeductions.map((d) => '- ' + d).join('\n')}
 
 Rules:
-1. Always cite PKR amounts from their actual data
+1. Always cite PKR amounts from their actual data (never USD/$)
 2. Reference FBR sections when giving deduction advice
 3. Flag with [SAVE MONEY] when you spot a missed deduction
-4. Keep answers concise — bullet points for action items`;
+4. Keep answers concise — format as short bullet points, use **bold** for key numbers, avoid long paragraphs`;
 
     const isMock = config.AI_API_KEY === 'sk-placeholder-replace-with-real-key';
 
