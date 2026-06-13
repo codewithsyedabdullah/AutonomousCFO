@@ -14,6 +14,7 @@ export default function Chat() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const bottomRef = useRef<HTMLDivElement>(null);
+  const assistantContent = useRef('');
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -27,6 +28,7 @@ export default function Chat() {
     setInput('');
     setLoading(true);
     setError('');
+    assistantContent.current = '';
 
     try {
       const res = await fetch('/api/chat', {
@@ -46,8 +48,7 @@ export default function Chat() {
       const reader = res.body?.getReader();
       if (!reader) throw new Error('No response stream');
 
-      const assistantMsg: Message = { role: 'assistant', content: '' };
-      setMessages((prev) => [...prev, assistantMsg]);
+      setMessages((prev) => [...prev, { role: 'assistant', content: '' }]);
 
       const decoder = new TextDecoder();
       let buffer = '';
@@ -68,23 +69,19 @@ export default function Chat() {
               const parsed = JSON.parse(data);
               const content = parsed.choices?.[0]?.delta?.content || parsed.content || '';
               if (content) {
+                assistantContent.current += content;
                 setMessages((prev) => {
-                  const updated = [...prev];
-                  const last = updated[updated.length - 1];
-                  if (last.role === 'assistant') {
-                    last.content += content;
-                  }
+                  const updated = prev.slice(0, -1);
+                  updated.push({ role: 'assistant', content: assistantContent.current });
                   return updated;
                 });
               }
             } catch {
               if (data) {
+                assistantContent.current += data;
                 setMessages((prev) => {
-                  const updated = [...prev];
-                  const last = updated[updated.length - 1];
-                  if (last.role === 'assistant') {
-                    last.content += data;
-                  }
+                  const updated = prev.slice(0, -1);
+                  updated.push({ role: 'assistant', content: assistantContent.current });
                   return updated;
                 });
               }
