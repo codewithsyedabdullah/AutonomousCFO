@@ -194,15 +194,15 @@ export default function Transactions() {
 
       <div className="card">
         <div className="flex items-center justify-between mb-4">
-          <h3 className="text-sm font-medium text-zinc-400 uppercase tracking-wider">CSV Upload</h3>
+          <h3 className="text-sm font-medium text-zinc-400 uppercase tracking-wider">Import Financial Documents</h3>
         </div>
         <form onSubmit={handleCsvUpload} className="flex items-center gap-4">
-          <input type="file" ref={fileRef} accept=".csv" className="text-sm text-zinc-400 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-zinc-800 file:text-zinc-300 hover:file:bg-zinc-700" />
+          <input type="file" ref={fileRef} accept=".csv,.pdf,.doc,.docx,.xls,.xlsx,.jpg,.jpeg,.png,.txt" className="text-sm text-zinc-400 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-zinc-800 file:text-zinc-300 hover:file:bg-zinc-700" />
           <button type="submit" className="btn-secondary flex items-center gap-2 text-sm">
-            <Upload size={16} /> Upload CSV
+            <Upload size={16} /> Upload Document
           </button>
         </form>
-        <p className="text-xs text-zinc-600 mt-2">CSV columns: date, amount, type, category, merchant, notes</p>
+        <p className="text-xs text-zinc-600 mt-2">Accepted: CSV, PDF, Word, Excel, images, text files. CSV files are auto-parsed.</p>
       </div>
 
       <div className="card">

@@ -79,7 +79,14 @@ router.delete('/:id', (req: Request, res: Response) => {
 router.post('/csv', upload.single('file'), (req: Request, res: Response) => {
   try {
     if (!req.file) {
-      res.status(400).json({ error: 'CSV file is required' });
+      res.status(400).json({ error: 'File is required' });
+      return;
+    }
+
+    const ext = req.file.originalname.split('.').pop()?.toLowerCase() || '';
+    const csvExts = ['csv'];
+    if (!csvExts.includes(ext)) {
+      res.json({ count: 0, message: `File "${req.file.originalname}" received. Only CSV files are auto-parsed. Use manual entry for other formats.` });
       return;
     }
 
@@ -109,10 +116,10 @@ router.post('/csv', upload.single('file'), (req: Request, res: Response) => {
       );
       count++;
     }
-    res.json({ count });
+    res.json({ count, message: `Imported ${count} transactions from CSV` });
   } catch (err) {
     console.error('CSV upload error:', err);
-    res.status(500).json({ error: 'Failed to parse CSV' });
+    res.status(500).json({ error: 'Failed to parse file' });
   }
 });
 
