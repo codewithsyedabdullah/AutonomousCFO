@@ -309,9 +309,7 @@ Rules:
 1. Always cite PKR amounts from their actual data
 2. Reference FBR sections when giving deduction advice
 3. Flag with [SAVE MONEY] when you spot a missed deduction
-4. Flag with [ACTION NEEDED] when they must do something
-5. Remind them you are an AI tool, not a licensed CPA, for any advice that could have legal consequences
-6. Keep answers concise — bullet points for action items`;
+4. Keep answers concise — bullet points for action items`;
 
     const isMock = config.AI_API_KEY === 'sk-placeholder-replace-with-real-key';
 

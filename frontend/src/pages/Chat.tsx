@@ -110,7 +110,12 @@ export default function Chat() {
   const formatMessage = (content: string) => {
     const formatted = content
       .replace(/\[⚠ ALERT\]/g, '')
+      .replace(/\[SAVE MONEY\]/g, '')
       .replace(/\*\*(.*?)\*\*/g, '<strong class="text-white">$1</strong>')
+      .replace(/\*(.*?)\*/g, '<em class="text-zinc-300">$1</em>')
+      .replace(/```(\w*)\n?([\s\S]*?)```/g, '<pre class="bg-black/40 text-zinc-300 p-3 rounded-lg my-2 text-xs overflow-x-auto font-mono">$2</pre>')
+      .replace(/`([^`]+)`/g, '<code class="bg-black/40 text-primary text-xs px-1 py-0.5 rounded">$1</code>')
+      .replace(/^- (.+)$/gm, '<li class="text-zinc-300 ml-4 list-disc">$1</li>')
       .replace(/\n/g, '<br />');
     return formatted;
   };

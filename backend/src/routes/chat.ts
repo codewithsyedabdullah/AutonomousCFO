@@ -145,10 +145,11 @@ Rules:
       const content = chunk.choices[0]?.delta?.content || '';
       if (content) {
         fullResponse += content;
-        res.write(content);
+        res.write(`data: ${JSON.stringify({ choices: [{ delta: { content } }] })}\n\n`);
       }
     }
 
+    res.write('data: [DONE]\n\n');
     res.end();
 
     const userMsg = { role: 'user', content: message };
