@@ -50,8 +50,7 @@ export default function Tax() {
 
   const formatTaxMessage = (content: string) => {
     return content
-      .replace(/\[SAVE MONEY\]/g, '')
-      .replace(/\[ACTION NEEDED\]/g, '')
+      .replace(/\[.*?\]/g, '')
       .replace(/\*\*(.*?)\*\*/g, '<strong class="text-white">$1</strong>')
       .replace(/\*(.*?)\*/g, '<em class="text-zinc-300">$1</em>')
       .replace(/`([^`]+)`/g, '<code class="bg-black/40 text-primary text-xs px-1 py-0.5 rounded">$1</code>')
@@ -322,9 +321,9 @@ export default function Tax() {
           )}
         </div>
         <div className="flex gap-2">
-          <input type="text" value={chatInput} onChange={(e) => setChatInput(e.target.value)}
-            onKeyDown={(e) => e.key === 'Enter' && handleChatSend()}
-            className="input-field flex-1" placeholder="Ask your tax lawyer..." disabled={chatLoading} />
+          <textarea value={chatInput} onChange={(e) => setChatInput(e.target.value)}
+            onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleChatSend(); } }}
+            className="input-field flex-1 resize-none !min-h-[44px] !py-3" placeholder="Ask your tax lawyer... (Shift+Enter for new line)" disabled={chatLoading} rows={1} />
           <button onClick={handleChatSend} disabled={!chatInput.trim() || chatLoading}
             className="btn-primary !p-2.5 !rounded-lg"><MessageSquare size={18} /></button>
         </div>

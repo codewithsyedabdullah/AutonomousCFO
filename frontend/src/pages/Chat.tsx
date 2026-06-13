@@ -106,8 +106,7 @@ export default function Chat() {
 
   const formatMessage = (content: string) => {
     const formatted = content
-      .replace(/\[⚠ ALERT\]/g, '')
-      .replace(/\[SAVE MONEY\]/g, '')
+      .replace(/\[.*?\]/g, '')
       .replace(/\*\*(.*?)\*\*/g, '<strong class="text-white">$1</strong>')
       .replace(/\*(.*?)\*/g, '<em class="text-zinc-300">$1</em>')
       .replace(/```(\w*)\n?([\s\S]*?)```/g, '<pre class="bg-black/40 text-zinc-300 p-3 rounded-lg my-2 text-xs overflow-x-auto font-mono">$2</pre>')
@@ -173,15 +172,15 @@ export default function Chat() {
           <div ref={bottomRef} />
         </div>
 
-        <div className="flex items-center gap-3 pt-3 border-t border-zinc-800">
-          <input
-            type="text"
+        <div className="flex items-end gap-3 pt-3 border-t border-zinc-800">
+          <textarea
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={handleKeyDown}
-            className="input-field flex-1"
-            placeholder="Ask about your finances..."
+            className="input-field flex-1 resize-none !min-h-[44px] !py-3"
+            placeholder="Ask about your finances... (Shift+Enter for new line)"
             disabled={loading}
+            rows={1}
           />
           <button
             onClick={handleSend}

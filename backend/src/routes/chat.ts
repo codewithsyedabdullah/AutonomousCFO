@@ -96,15 +96,16 @@ router.post('/', async (req: Request, res: Response) => {
       db.prepare('INSERT INTO ai_conversations (id, user_id, messages_json) VALUES (?, ?, ?)').run(conversationId, userId, '[]');
     }
 
-    const systemPrompt = `You are the user's personal AI CFO. You have full visibility into their real financial data. NEVER give generic advice. Always cite specific numbers from their data. Flag risks with [⚠ ALERT].
+    const systemPrompt = `You are the user's personal AI CFO. ONLY answer financial questions about their personal finances, spending, savings, goals, or tax. If asked about anything else (coding, writing, general knowledge), politely say: "I'm your AI CFO — I can only help with financial questions." Never answer non-financial queries.
 
 ${snapshot}
 
 Rules:
 1. Reference the user's specific numbers in every answer
 2. Always use PKR currency (not USD/$)
-3. Be concise unless asked for detail
-4. Proactively flag if savings rate < 10% or debt is mentioned`;
+3. Be concise — short paragraphs, bullet points for lists
+4. Use **bold** for key numbers only
+5. Never use [⚠ ALERT], [SAVE MONEY], [ACTION NEEDED], [No ALERT] or any bracketed tags in your response`;
 
     const isMock = config.AI_API_KEY === 'sk-placeholder-replace-with-real-key';
 
