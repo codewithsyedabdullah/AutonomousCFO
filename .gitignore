@@ -3,5 +3,6 @@ dist/
 backend/data/
 .env
 *.log
+*.err
 .DS_Store
 *.tsbuildinfo

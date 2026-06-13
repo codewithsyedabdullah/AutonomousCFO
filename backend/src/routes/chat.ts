@@ -121,7 +121,7 @@ Rules:
       return;
     }
 
-    const openai = new OpenAI({ apiKey: config.AI_API_KEY, baseURL: 'https://openrouter.ai/api/v1' });
+    const openai = new OpenAI({ apiKey: config.AI_API_KEY, baseURL: config.AI_API_BASE_URL });
     const apiMessages: any[] = [{ role: 'system', content: systemPrompt }];
 
     for (const msg of messages) {

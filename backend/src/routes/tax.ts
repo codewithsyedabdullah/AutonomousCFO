@@ -322,7 +322,7 @@ Rules:
     }
 
     const { default: OpenAI } = await import('openai');
-    const openai = new OpenAI({ apiKey: config.AI_API_KEY, baseURL: 'https://openrouter.ai/api/v1' });
+    const openai = new OpenAI({ apiKey: config.AI_API_KEY, baseURL: config.AI_API_BASE_URL });
 
     const completion = await openai.chat.completions.create({
       model: config.AI_MODEL,

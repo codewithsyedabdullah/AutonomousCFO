@@ -17,7 +17,9 @@ services:
         sync: false
       - key: AI_API_TYPE
         value: openai
+      - key: AI_API_BASE_URL
+        value: https://api.groq.com/openai/v1
       - key: AI_MODEL
-        value: gpt-4o
+        value: llama-3.3-70b-versatile
       - key: DATABASE_URL
         value: /data/autocfo.db
