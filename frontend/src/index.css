@@ -4,7 +4,10 @@
 
 @layer base {
   body {
-    @apply bg-[#0A0A0F] text-white font-['Inter'] antialiased;
+    background-color: hsl(150, 20%, 5%);
+    color: hsl(45, 30%, 90%);
+    font-family: 'Inter', sans-serif;
+    -webkit-font-smoothing: antialiased;
   }
 
   ::-webkit-scrollbar {
@@ -33,18 +36,56 @@
 
 @layer components {
   .card {
-    @apply bg-zinc-900/80 border border-zinc-800 rounded-xl p-6 backdrop-blur-sm;
+    background-color: hsla(150, 20%, 10%, 0.8);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 0.75rem;
+    padding: 1.5rem;
+    backdrop-filter: blur(8px);
   }
 
   .btn-primary {
-    @apply bg-primary hover:bg-primary-dark text-white font-medium py-2.5 px-5 rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed;
+    background-color: hsl(45, 70%, 75%);
+    color: hsl(150, 20%, 5%);
+    font-weight: 500;
+    padding: 0.625rem 1.25rem;
+    border-radius: 0.5rem;
+    transition: all 0.2s;
+  }
+  .btn-primary:hover {
+    background-color: hsl(45, 60%, 65%);
+  }
+  .btn-primary:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
   }
 
   .btn-secondary {
-    @apply bg-zinc-800 hover:bg-zinc-700 text-white font-medium py-2.5 px-5 rounded-lg transition-all duration-200;
+    background-color: hsla(45, 30%, 90%, 0.1);
+    color: hsl(45, 30%, 90%);
+    font-weight: 500;
+    padding: 0.625rem 1.25rem;
+    border-radius: 0.5rem;
+    transition: all 0.2s;
+  }
+  .btn-secondary:hover {
+    background-color: hsla(45, 30%, 90%, 0.15);
   }
 
   .input-field {
-    @apply w-full bg-zinc-800/60 border border-zinc-700 rounded-lg px-4 py-2.5 text-white placeholder-zinc-500 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all duration-200;
+    width: 100%;
+    background-color: hsla(45, 30%, 90%, 0.06);
+    border: 1px solid hsla(45, 30%, 90%, 0.12);
+    border-radius: 0.5rem;
+    padding: 0.625rem 1rem;
+    color: hsl(45, 30%, 90%);
+    outline: none;
+    transition: all 0.2s;
+  }
+  .input-field::placeholder {
+    color: hsla(45, 30%, 90%, 0.3);
+  }
+  .input-field:focus {
+    border-color: hsl(45, 70%, 75%);
+    box-shadow: 0 0 0 1px hsl(45, 70%, 75%);
   }
 }

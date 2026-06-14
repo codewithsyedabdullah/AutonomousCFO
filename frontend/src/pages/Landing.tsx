@@ -1,94 +1,79 @@
 import { Link } from 'react-router-dom';
-import { ArrowRight, Brain, MessageSquare, Wand2 } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 
 export default function Landing() {
   return (
-    <div className="h-screen overflow-hidden flex flex-col" style={{ backgroundColor: '#F5F3EE', fontFamily: 'Inter, sans-serif' }}>
+    <div className="min-h-screen flex flex-col relative overflow-visible" style={{ backgroundColor: 'hsl(150,20%,5%)', fontFamily: "'Inter', sans-serif" }}>
       <video
         autoPlay loop muted playsInline
         className="fixed top-0 left-0 w-full h-full object-cover pointer-events-none"
         style={{ zIndex: 0 }}
       >
-        <source src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260328_102305_3a7cab3b-7a86-46e8-a0f9-6937f035b087.mp4" type="video/mp4" />
+        <source src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260325_094440_a3592600-bd1e-49e5-9bce-a73662061d83.mp4" type="video/mp4" />
       </video>
 
-      <header className="relative px-6 lg:px-12 py-4 lg:py-6 flex-shrink-0" style={{ zIndex: 10 }}>
-        <nav className="flex items-center justify-between">
-          <Link to="/" className="text-2xl lg:text-3xl font-bold text-black">AUTO CFO</Link>
-          <div className="flex items-center gap-3">
-            <Link to="/login" className="px-4 lg:px-6 py-2 text-base lg:text-lg text-black hover:text-black/70 transition">Sign In</Link>
-            <Link to="/register" className="px-4 lg:px-6 py-2 bg-black text-white text-base lg:text-lg hover:bg-gray-800 transition rounded-full">Get Started</Link>
+      <div className="relative z-10 flex flex-col min-h-screen overflow-visible">
+        <nav className="flex items-center justify-between px-8 md:px-16 py-6 flex-shrink-0">
+          <Link to="/" className="flex items-center gap-2">
+            <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M8 10L14 30L20 16L26 30L32 10" stroke="hsl(45,30%,90%)" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+            <span className="text-lg tracking-wide" style={{ color: 'hsl(45,30%,90%)', fontFamily: "'Inter', sans-serif" }}>AUTO CFO</span>
+          </Link>
+          <div className="flex items-center gap-4">
+            <Link to="/login" className="text-base tracking-wide transition-opacity hover:opacity-80" style={{ color: 'hsl(45,30%,90%)' }}>Sign In</Link>
+            <Link to="/register" className="px-6 py-2 rounded-[43px] text-base font-medium transition-transform hover:scale-105" style={{ backgroundColor: 'hsl(45,70%,75%)', color: 'hsl(150,20%,5%)' }}>Get Started</Link>
           </div>
         </nav>
-      </header>
 
-      <main className="relative px-6 lg:px-12 py-6 lg:py-8 flex-1 flex flex-col justify-between" style={{ zIndex: 10 }}>
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
-          <div>
-            <h1 className="text-5xl sm:text-6xl lg:text-6xl xl:text-7xl font-normal text-black leading-[0.80] tracking-tight mb-4 lg:mb-5" style={{ fontFamily: 'Anton, sans-serif' }}>
-              YOUR FINANCIAL
-              <br />
-              TWIN.
-              <br />
-              AI-POWERED.
+        <main className="flex-1 flex flex-col justify-center px-8 md:px-16 pb-10 overflow-visible">
+          <div className="max-w-3xl overflow-visible">
+            <h1 className="text-6xl md:text-8xl lg:text-[7rem] leading-[0.95] tracking-tight mb-12 overflow-visible" style={{ color: 'hsl(45,30%,90%)', fontFamily: "'Anton', sans-serif" }}>
+              OWN THE FUTURE<br />OF YOUR{' '}
+              <span className="relative inline-block overflow-visible">
+                ASSETS.
+                <span className="absolute inset-0 blur-sm" style={{ color: 'hsl(0,0%,100%)', WebkitMaskImage: 'linear-gradient(to bottom left, white 25%, transparent 55%)', maskImage: 'linear-gradient(to bottom left, white 25%, transparent 55%)' }} aria-hidden="true">ASSETS.</span>
+                <span className="absolute inset-0 blur-md opacity-60" style={{ color: 'hsl(0,0%,100%)', WebkitMaskImage: 'linear-gradient(to bottom left, white 20%, transparent 50%)', maskImage: 'linear-gradient(to bottom left, white 20%, transparent 50%)' }} aria-hidden="true">ASSETS.</span>
+              </span>
             </h1>
-            <p className="text-lg lg:text-xl mb-4 lg:mb-5 max-w-md" style={{ color: '#080808' }}>
+            <p className="text-lg md:text-xl max-w-xl mb-8" style={{ color: 'hsla(45,30%,90%,0.7)' }}>
               CFO-level insight for everyone. Your real numbers, your personal AI advisor — no generic tips.
             </p>
             <Link
               to="/register"
-              className="inline-flex items-center gap-3 pl-8 pr-1.5 py-1.5 bg-black text-white rounded-full hover:bg-gray-800 transition text-base lg:text-lg"
+              className="relative inline-flex items-center gap-3 px-10 py-4 rounded-[43px] text-xl font-medium overflow-hidden transition-transform hover:scale-105"
+              style={{ backgroundColor: 'hsl(45,70%,75%)', color: 'hsl(150,20%,5%)', boxShadow: '0px 4px 95px 4px hsla(45,70%,50%,0.6)' }}
             >
-              Start today <span className="w-8 h-8 rounded-full bg-white flex items-center justify-center"><ArrowRight size={18} className="text-black" /></span>
+              <span className="absolute w-48 h-10 rounded-full blur-xl" style={{ backgroundColor: 'hsl(45,60%,95%)', top: '-12px', left: '50%', transform: 'translateX(-50%)' }} />
+              <span className="relative z-10">Launch Your Financial Twin</span>
+              <ArrowRight size={20} className="relative z-10" />
             </Link>
           </div>
-          <div className="text-right">
-            <h2 className="text-5xl sm:text-6xl lg:text-6xl xl:text-7xl font-normal text-black leading-[0.80] tracking-tight mb-3" style={{ fontFamily: 'Anton, sans-serif' }}>
-              3 MIN SETUP
-            </h2>
-            <p className="text-base lg:text-lg" style={{ color: '#080808' }}>
-              No bank APIs. No credit card. 100% free.
-            </p>
-          </div>
-        </div>
+        </main>
+      </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 mt-8">
-          <div>
-            <p className="text-base lg:text-lg leading-relaxed mb-4" style={{ color: '#080808' }}>
-              Built for Code-Storm 26 — your financial twin that tracks spending, predicts scenarios, and gives CFO-level advice through AI chat.
-            </p>
-            <div className="flex items-center gap-4">
-              {['Finance', 'Instagram', 'YouTube'].map((s) => (
-                <span key={s} className="text-sm font-medium" style={{ color: '#080808' }}>{s}</span>
-              ))}
-            </div>
-          </div>
-          <div className="text-right">
-            <h2 className="text-5xl sm:text-6xl lg:text-6xl xl:text-7xl font-normal text-black leading-[0.80] tracking-tight mb-3" style={{ fontFamily: 'Anton, sans-serif' }}>
-              AI-POWERED
-            </h2>
-            <p className="text-base lg:text-lg" style={{ color: '#080808' }}>
-              Groq LLM • Real-time insights • Tax filing
-            </p>
+      <section className="relative z-10 py-20 px-8 md:px-16" style={{ backgroundColor: 'hsla(150,20%,3%,0.9)' }}>
+        <div className="max-w-7xl mx-auto">
+          <div className="grid md:grid-cols-3 gap-6">
+            {[
+              { value: '3 min', label: 'Setup time' },
+              { value: '100%', label: 'Free. No card needed.' },
+              { value: 'AI-Powered', label: 'Groq LLM + RAG' },
+            ].map(({ value, label }) => (
+              <div key={label} className="text-center p-8 rounded-2xl border" style={{ borderColor: 'hsla(45,30%,90%,0.06)', backgroundColor: 'hsla(150,20%,10%,0.6)' }}>
+                <p className="text-3xl font-bold mb-2" style={{ color: 'hsl(45,70%,75%)', fontFamily: "'Anton', sans-serif" }}>{value}</p>
+                <p className="text-sm" style={{ color: 'hsla(45,30%,90%,0.5)' }}>{label}</p>
+              </div>
+            ))}
           </div>
         </div>
+      </section>
 
-        <div className="grid grid-cols-3 lg:grid-cols-6 gap-4 mt-8">
-          {[
-            { name: 'Dashboard', desc: 'Real-time net worth & health' },
-            { name: 'AI Chat', desc: 'Talk to your financial twin' },
-            { name: 'Simulator', desc: '"What if" scenario planner' },
-            { name: 'Goals', desc: 'Track & hit targets' },
-            { name: 'Tax', desc: 'FBR Pakistan filing' },
-            { name: 'Upload', desc: 'CSV / PDF / DOCX import' },
-          ].map(({ name, desc }) => (
-            <div key={name} className="rounded-lg p-4 text-center" style={{ backgroundColor: 'rgba(255,255,255,0.7)' }}>
-              <p className="font-semibold text-sm" style={{ color: '#080808' }}>{name}</p>
-              <p className="text-xs mt-1" style={{ color: '#666' }}>{desc}</p>
-            </div>
-          ))}
+      <footer className="relative z-10 border-t py-8 px-8 md:px-16" style={{ borderColor: 'hsla(45,30%,90%,0.06)', backgroundColor: 'hsla(150,20%,3%,0.9)' }}>
+        <div className="max-w-7xl mx-auto text-center">
+          <p className="text-sm" style={{ color: 'hsla(45,30%,90%,0.3)' }}>Built for Code-Storm 26 — Fintech Track. No bank APIs required. No credit card needed. Ever.</p>
         </div>
-      </main>
+      </footer>
     </div>
   );
 }

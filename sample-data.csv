@@ -1,0 +1,18 @@
+date,amount,type,category,merchant,notes
+2025-01-05,150000,income,Salary,Acme Corp,January salary
+2025-01-06,45000,expense,Housing,Landlord,Monthly rent
+2025-01-07,15000,expense,Food & Dining,Superstore,Grocery shopping
+2025-01-08,5000,expense,Transportation,Fuel Station,Car fuel
+2025-01-10,25000,expense,Utilities,K Electric,Electricity bill
+2025-01-12,3000,expense,Entertainment,Netflix,Monthly subscription
+2025-02-05,150000,income,Salary,Acme Corp,February salary
+2025-02-06,45000,expense,Housing,Landlord,Monthly rent
+2025-02-07,12000,expense,Food & Dining,Restaurant,Dinner out
+2025-02-10,3000,expense,Transportation,Careem,Ride to office
+2025-02-15,10000,expense,Shopping,Daraz,Online shopping
+2025-02-20,2000,expense,Entertainment,Steam,Game purchase
+2025-03-05,150000,income,Salary,Acme Corp,March salary
+2025-03-06,45000,expense,Housing,Landlord,Monthly rent
+2025-03-08,5000,expense,Healthcare,Pharmacy,Medicine
+2025-03-10,8000,expense,Education,Coursera,Online course
+2025-03-15,20000,expense,Freelance,Upwork,Project supplies

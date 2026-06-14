@@ -7,16 +7,17 @@ export default {
   theme: {
     extend: {
       colors: {
-        primary: '#6C63FF',
-        'primary-dark': '#5A52D5',
-        'dark-bg': '#0A0A0F',
-        'dark-surface': '#18181B',
+        primary: 'hsl(45,70%,75%)',
+        'primary-dark': 'hsl(45,60%,65%)',
+        'dark-bg': 'hsl(150,20%,5%)',
+        'dark-surface': 'hsla(150,20%,10%,0.8)',
         success: '#22C55E',
         warning: '#F59E0B',
         danger: '#EF4444',
       },
       fontFamily: {
         inter: ['Inter', 'sans-serif'],
+        anton: ['Anton', 'sans-serif'],
       },
     },
   },
