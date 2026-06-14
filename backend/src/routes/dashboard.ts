@@ -12,8 +12,8 @@ router.get('/', async (req: Request, res: Response) => {
 
   const totals = await db.prepare(`
     SELECT
-      COALESCE(SUM(CASE WHEN type = 'income' THEN amount ELSE 0 END), 0) as totalIncome,
-      COALESCE(SUM(CASE WHEN type = 'expense' THEN amount ELSE 0 END), 0) as totalExpenses
+      COALESCE(SUM(CASE WHEN type = 'income' THEN amount ELSE 0 END), 0) as "totalIncome",
+      COALESCE(SUM(CASE WHEN type = 'expense' THEN amount ELSE 0 END), 0) as "totalExpenses"
     FROM transactions WHERE user_id = ?
   `).get(userId) as any;
 

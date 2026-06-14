@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AUTO CFO — Pitch Demo</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Anton&display=swap" rel="stylesheet">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Inter', sans-serif; background: hsl(150,20%,5%); color: hsl(45,30%,90%); overflow: hidden; height: 100vh; }
+.slide {
+  position: absolute; top: 0; left: 0; width: 100%; height: 100vh;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  padding: 60px; opacity: 0; transition: opacity 0.8s; text-align: center;
+}
+.slide.active { opacity: 1; z-index: 10; }
+h1 { font-family: 'Anton', sans-serif; font-size: 4rem; line-height: 1; margin-bottom: 20px; letter-spacing: -1px; }
+h2 { font-family: 'Anton', sans-serif; font-size: 2.5rem; line-height: 1.1; margin-bottom: 16px; color: hsl(45,70%,75%); }
+p { font-size: 1.3rem; line-height: 1.6; max-width: 700px; color: hsl(45,30%,80%); }
+.badge { display: inline-block; padding: 8px 20px; border-radius: 43px; background: hsl(45,70%,75%); color: hsl(150,20%,5%); font-weight: 600; font-size: 0.9rem; margin-top: 25px; }
+.grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-top: 30px; max-width: 800px; }
+.stat-card { background: hsla(150,20%,10%,0.8); border: 1px solid hsla(45,30%,90%,0.06); border-radius: 16px; padding: 24px; }
+.stat-card .num { font-family: 'Anton', sans-serif; font-size: 2.5rem; color: hsl(45,70%,75%); }
+.stat-card .label { font-size: 0.85rem; color: hsl(45,30%,50%); margin-top: 5px; }
+.demo-frame { width: 85%; max-width: 900px; height: 65vh; border-radius: 12px; border: 1px solid hsla(45,30%,90%,0.1); overflow: hidden; margin-top: 15px; background: hsl(150,20%,8%); position: relative; }
+.demo-bar { display: flex; align-items: center; gap: 12px; padding: 12px 20px; background: hsl(150,20%,12%); border-bottom: 1px solid hsla(45,30%,90%,0.06); }
+.demo-dots { display: flex; gap: 6px; }
+.demo-dot { width: 10px; height: 10px; border-radius: 50%; }
+.demo-dot:nth-child(1) { background: #EF4444; }
+.demo-dot:nth-child(2) { background: #F59E0B; }
+.demo-dot:nth-child(3) { background: #22C55E; }
+.demo-title { font-size: 0.8rem; color: hsl(45,30%,40%); }
+.demo-content { padding: 20px; text-align: left; font-size: 0.9rem; color: hsl(45,30%,70%); line-height: 1.8; }
+.demo-content .row { display: flex; justify-content: space-between; border-bottom: 1px solid hsla(45,30%,90%,0.04); padding: 6px 0; }
+.demo-content .row .val { color: hsl(45,30%,90%); font-weight: 500; }
+.demo-content .row .green { color: #22C55E; }
+.demo-content .row .red { color: #EF4444; }
+.chat-bubble { background: hsla(150,20%,15%,0.9); border-radius: 12px; padding: 12px 16px; margin: 8px 0; max-width: 80%; }
+.chat-bubble.user { background: hsla(45,70%,75%,0.1); margin-left: auto; border: 1px solid hsla(45,70%,75%,0.2); }
+.chat-bubble.ai { border: 1px solid hsla(45,30%,90%,0.08); }
+.typing { display: inline-flex; gap: 4px; }
+.typing span { width: 6px; height: 6px; border-radius: 50%; background: hsl(45,30%,50%); animation: blink 1.4s infinite; }
+.typing span:nth-child(2) { animation-delay: 0.2s; }
+.typing span:nth-child(3) { animation-delay: 0.4s; }
+@keyframes blink { 0%,100% { opacity: 0.3; } 50% { opacity: 1; } }
+.progress { position: fixed; bottom: 0; left: 0; height: 4px; background: hsl(45,70%,75%); z-index: 100; transition: width 0.3s; }
+.timer { position: fixed; top: 20px; right: 30px; font-size: 1.2rem; color: hsl(45,30%,40%); z-index: 100; font-family: 'Inter', monospace; }
+.tag { position: fixed; top: 20px; left: 30px; font-family: 'Anton', sans-serif; font-size: 1.5rem; color: hsl(45,70%,75%); z-index: 100; letter-spacing: 2px; }
+</style>
+</head>
+<body>
+
+<div class="tag">AUTO CFO</div>
+<div class="timer" id="timer">0:00</div>
+<div class="progress" id="progress"></div>
+
+<div id="startOverlay" style="position:fixed;top:0;left:0;width:100%;height:100vh;background:hsl(150,20%,5%);z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;transition:opacity 0.6s">
+  <div style="font-family:'Anton',sans-serif;font-size:4rem;color:hsl(45,70%,75%);margin-bottom:10px">AUTO CFO</div>
+  <div style="color:hsl(45,30%,50%);font-size:1.2rem;margin-bottom:30px">Click anywhere to start</div>
+  <div style="animation:pulse 2s ease-in-out infinite;font-size:3rem">▶</div>
+</div>
+
+<div class="slide active" id="s0">
+  <h1>70% of Pakistanis have<br>no financial advisor.</h1>
+  <p style="margin-top:20px">Spreadsheets are overwhelming. Bank apps show transactions,<br>not insights. Tax filing is a nightmare.</p>
+  <p style="margin-top:30px; font-size:1.1rem; color:hsl(45,30%,50%)">People don't know where their money goes — until it's gone.</p>
+  <div class="grid-3">
+    <div class="stat-card"><div class="num">70%</div><div class="label">No financial guidance</div></div>
+    <div class="stat-card"><div class="num">95%</div><div class="label">No financial plan</div></div>
+    <div class="stat-card"><div class="num">5M+</div><div class="label">New FBR taxpayers/year</div></div>
+  </div>
+  <div class="badge">The Problem</div>
+</div>
+
+<div class="slide" id="s1">
+  <h2>Meet AUTO CFO</h2>
+  <p style="font-size:1.8rem; font-weight:600; margin-bottom:10px">Your AI Financial Twin</p>
+  <p>Upload your bank CSV — get instant insights. Net worth, savings rate,<br>health score, and a personal AI CFO that knows YOUR numbers.</p>
+  <div class="grid-3" style="max-width:700px">
+    <div class="stat-card"><div class="num" style="font-size:1.8rem">📄 CSV Upload</div><div class="label">Bank statements to insights</div></div>
+    <div class="stat-card"><div class="num" style="font-size:1.8rem">🤖 AI Chat</div><div class="label">Ask anything about your money</div></div>
+    <div class="stat-card"><div class="num" style="font-size:1.8rem">📊 Tax PDF</div><div class="label">FBR-ready in one click</div></div>
+  </div>
+  <p style="margin-top:25px; font-size:1rem; color:hsl(45,30%,50%)">No API. No credit card. 100% free. Built for Pakistan, in PKR.</p>
+  <div class="badge">How It Works</div>
+</div>
+
+<div class="slide" id="s2">
+  <h2 style="font-size:2rem">Live Demo</h2>
+  <p style="margin-bottom:10px; font-size:1rem">Register, Upload CSV, Instant Dashboard</p>
+  <div class="demo-frame">
+    <div class="demo-bar">
+      <div class="demo-dots"><div class="demo-dot"></div><div class="demo-dot"></div><div class="demo-dot"></div></div>
+      <div class="demo-title">autonomous-cfo.vercel.app</div>
+    </div>
+    <div class="demo-content">
+      <div style="text-align:center; padding:30px 0">
+        <div style="font-size:3rem; margin-bottom:10px">📋</div>
+        <div style="font-size:1.3rem; font-weight:600; color:hsl(45,30%,90%)">Create your Financial Twin</div>
+        <div style="color:hsl(45,30%,50%); margin:6px 0 20px">Free. No credit card. No bank API.</div>
+        <div style="display:flex; flex-direction:column; gap:10px; max-width:300px; margin:0 auto">
+          <div style="background:hsla(45,30%,90%,0.06); border:1px solid hsla(45,30%,90%,0.12); border-radius:8px; padding:10px; text-align:left; color:hsl(45,30%,40%)">John Doe</div>
+          <div style="background:hsla(45,30%,90%,0.06); border:1px solid hsla(45,30%,90%,0.12); border-radius:8px; padding:10px; text-align:left; color:hsl(45,30%,40%)">john@example.com</div>
+          <div style="background:hsla(45,30%,90%,0.06); border:1px solid hsla(45,30%,90%,0.12); border-radius:8px; padding:10px; text-align:left; color:hsl(45,30%,40%)">******</div>
+          <div style="background:hsl(45,70%,75%); color:hsl(150,20%,5%); border-radius:8px; padding:10px; font-weight:600; margin-top:5px">Create Account</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="badge">Demo: Registration</div>
+</div>
+
+<div class="slide" id="s3">
+  <h2 style="font-size:2rem">Dashboard</h2>
+  <p style="margin-bottom:10px; font-size:1rem">Real data. Real insights.</p>
+  <div class="demo-frame">
+    <div class="demo-bar">
+      <div class="demo-dots"><div class="demo-dot"></div><div class="demo-dot"></div><div class="demo-dot"></div></div>
+      <div class="demo-title">Dashboard</div>
+    </div>
+    <div class="demo-content">
+      <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px; margin-bottom:15px">
+        <div style="background:hsla(150,20%,10%,0.8); border-radius:10px; padding:14px; text-align:center">
+          <div style="font-size:0.7rem; color:hsl(45,30%,40%); text-transform:uppercase; letter-spacing:1px">Net Worth</div>
+          <div style="font-size:1.4rem; font-weight:700; color:#22C55E; margin-top:4px">PKR 1,050,000</div>
+        </div>
+        <div style="background:hsla(150,20%,10%,0.8); border-radius:10px; padding:14px; text-align:center">
+          <div style="font-size:0.7rem; color:hsl(45,30%,40%); text-transform:uppercase; letter-spacing:1px">Savings Rate</div>
+          <div style="font-size:1.4rem; font-weight:700; color:hsl(45,70%,75%); margin-top:4px">35.2%</div>
+        </div>
+        <div style="background:hsla(150,20%,10%,0.8); border-radius:10px; padding:14px; text-align:center">
+          <div style="font-size:0.7rem; color:hsl(45,30%,40%); text-transform:uppercase; letter-spacing:1px">Health Score</div>
+          <div style="font-size:1.4rem; font-weight:700; color:#22C55E; margin-top:4px">72/100</div>
+        </div>
+      </div>
+      <div class="row"><span>Monthly Income</span><span class="val green">PKR 150,000</span></div>
+      <div class="row"><span>Monthly Expenses</span><span class="val red">PKR 97,250</span></div>
+      <div class="row"><span>Top Category</span><span class="val">Housing — PKR 45,000</span></div>
+    </div>
+  </div>
+  <div class="badge">Demo: Dashboard</div>
+</div>
+
+<div class="slide" id="s4">
+  <h2 style="font-size:2rem">AI CFO Chat</h2>
+  <p style="margin-bottom:10px; font-size:1rem">Ask anything. It knows YOUR numbers.</p>
+  <div class="demo-frame">
+    <div class="demo-bar">
+      <div class="demo-dots"><div class="demo-dot"></div><div class="demo-dot"></div><div class="demo-dot"></div></div>
+      <div class="demo-title">AI CFO</div>
+    </div>
+    <div class="demo-content" style="display:flex; flex-direction:column">
+      <div class="chat-bubble user" style="align-self:flex-end">
+        <div style="font-size:0.7rem; color:hsl(45,30%,40%)">You</div>
+        <div>What's my average monthly spending?</div>
+      </div>
+      <div class="chat-bubble ai" style="align-self:flex-start">
+        <div style="font-size:0.7rem; color:hsl(45,70%,75%)">AI CFO</div>
+        <div>Your average monthly spending is <strong>PKR 97,250</strong>. Your top category is Housing at PKR 45,000/mo. You could save ~PKR 15,000/mo by reducing dining out.</div>
+      </div>
+      <div class="chat-bubble user" style="align-self:flex-end">
+        <div style="font-size:0.7rem; color:hsl(45,30%,40%)">You</div>
+        <div>Can I afford a car?</div>
+      </div>
+      <div class="typing" style="padding:12px"><span></span><span></span><span></span></div>
+    </div>
+  </div>
+  <div class="badge">Demo: AI Chat</div>
+</div>
+
+<div class="slide" id="s5">
+  <h2 style="font-size:2rem">Tax Module</h2>
+  <p style="margin-bottom:10px; font-size:1rem">One click, FBR-ready PDF</p>
+  <div class="demo-frame">
+    <div class="demo-bar">
+      <div class="demo-dots"><div class="demo-dot"></div><div class="demo-dot"></div><div class="demo-dot"></div></div>
+      <div class="demo-title">Tax Module — FBR Pakistan</div>
+    </div>
+    <div class="demo-content">
+      <div style="text-align:center; padding:10px 0">
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; text-align:left; max-width:400px; margin:0 auto">
+          <div style="color:hsl(45,30%,50%)">Gross Income</div><div style="color:hsl(45,30%,90%); font-weight:600; text-align:right">PKR 450,000</div>
+          <div style="color:hsl(45,30%,50%)">Total Deductions</div><div style="color:#22C55E; font-weight:600; text-align:right">PKR 98,000</div>
+          <div style="color:hsl(45,30%,50%)">Taxable Income</div><div style="color:hsl(45,70%,75%); font-weight:600; text-align:right">PKR 352,000</div>
+          <div style="color:hsl(45,30%,50%)">Tax Liability</div><div style="color:#EF4444; font-weight:600; text-align:right">PKR 7,040</div>
+          <div style="color:hsl(45,30%,50%)">Effective Rate</div><div style="color:hsl(45,30%,90%); font-weight:600; text-align:right">1.56%</div>
+        </div>
+        <div style="margin-top:20px; display:inline-block; background:hsl(45,70%,75%); color:hsl(150,20%,5%); padding:10px 30px; border-radius:43px; font-weight:600; font-size:0.9rem">Download Tax PDF</div>
+        <div style="margin-top:8px; font-size:0.75rem; color:hsl(45,30%,40%)">Ready for FBR IRIS filing</div>
+      </div>
+    </div>
+  </div>
+  <div class="badge">Demo: Tax PDF</div>
+</div>
+
+<div class="slide" id="s6">
+  <h1 style="font-size:3.5rem">Why Pakistan? Why Now?</h1>
+  <div class="grid-3" style="max-width:800px; margin-top:20px">
+    <div class="stat-card">
+      <div class="num" style="font-size:2rem">230M</div>
+      <div class="label">Population — 60% under 30</div>
+      <p style="font-size:0.8rem; margin-top:8px; color:hsl(45,30%,50%)">Youngest population in the world</p>
+    </div>
+    <div class="stat-card">
+      <div class="num" style="font-size:2rem">5M+</div>
+      <div class="label">New FBR taxpayers annually</div>
+      <p style="font-size:0.8rem; margin-top:8px; color:hsl(45,30%,50%)">Digital tax filing is exploding</p>
+    </div>
+    <div class="stat-card">
+      <div class="num" style="font-size:2rem">0</div>
+      <div class="label">Free AI financial advisors exist</div>
+      <p style="font-size:0.8rem; margin-top:8px; color:hsl(45,30%,50%)">Untapped market — first mover</p>
+    </div>
+  </div>
+  <div style="margin-top:25px; max-width:650px; text-align:left; background:hsla(150,20%,10%,0.6); padding:20px 28px; border-radius:16px; border:1px solid hsla(45,30%,90%,0.06)">
+    <p style="font-size:1rem; font-weight:600; color:hsl(45,70%,75%); margin-bottom:8px">Revenue Model</p>
+    <p style="font-size:0.9rem; color:hsl(45,30%,70%); line-height:1.8">
+      • <strong>Free tier</strong> — CSV upload, AI chat, basic dashboard<br>
+      • <strong>Premium (PKR 500/mo)</strong> — Auto bank sync, advanced AI, tax filing automation<br>
+      • <strong>Business</strong> — Freelancer/SME plans, FBR API integration, multi-account<br>
+      • <strong>Enterprise</strong> — White-label for banks, microfinance institutions
+    </p>
+  </div>
+  <div class="badge">Future and Revenue</div>
+</div>
+
+<div class="slide" id="s7">
+  <h1 style="font-size:5rem; color:hsl(45,70%,75%)">AUTO CFO</h1>
+  <p style="font-size:1.5rem; margin-top:10px">Your AI Financial Twin</p>
+  <p style="margin-top:25px; font-size:1rem; color:hsl(45,30%,50%)">Built for Code-Storm 26 — Fintech Track</p>
+  <div style="margin-top:30px; display:flex; gap:20px; justify-content:center">
+    <div style="padding:14px 40px; border-radius:43px; background:hsl(45,70%,75%); color:hsl(150,20%,5%); font-weight:600; font-size:1.1rem">autonomous-cfo.vercel.app</div>
+  </div>
+  <p style="margin-top:40px; font-size:0.85rem; color:hsl(45,30%,30%)">No bank APIs. No credit card. 100% Pakistan.</p>
+  <div class="badge">Thank You</div>
+</div>
+
+<style>
+@keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.3; } }
+</style>
+
+<script>
+const slides = document.querySelectorAll('.slide');
+const timerEl = document.getElementById('timer');
+const progressEl = document.getElementById('progress');
+const overlay = document.getElementById('startOverlay');
+const timings = [0, 30, 60, 90, 120, 150, 180, 210];
+const totalDuration = 210;
+
+let currentSlide = 0;
+let startTime = null;
+let voice = null;
+let currentUtterance = null;
+let started = false;
+
+const narrations = [
+  "70 percent of Pakistanis have no financial advisor. Spreadsheets are overwhelming. Bank apps show transactions, not insights. Tax filing is a nightmare. People don't know where their money goes, until it's gone.",
+  "Meet Auto CFO: your AI financial twin. Upload your bank CSV, and instantly get your net worth, savings rate, health score, and a personal AI that knows your numbers. No API needed, no credit card. 100 percent free. Built for Pakistan, in PKR.",
+  "Getting started takes about 30 seconds. Create your account, upload your bank statement as a CSV file, and your financial dashboard appears instantly. No bank API integration. No complicated setup. Just upload and go.",
+  "Here's the dashboard in action. Net worth: 10 lakh 50 thousand PKR. Savings rate: 35 percent. Health score: 72 out of 100. Monthly income, expenses, and top categories, all computed automatically from your data in real time.",
+  "The AI CFO chat knows your actual numbers. Ask what's my average monthly spending and it answers with your data. Ask if you can afford a car and it analyzes your cash flow. It only answers financial questions, never generic advice.",
+  "Tax season made simple. One click generates an FBR-ready PDF with your gross income, deductions, taxable income, and tax liability. Ready for direct submission to FBR IRIS. No accountant needed.",
+  "Why Pakistan? 230 million people, 60 percent under 30. 5 million new FBR taxpayers every year. And zero free AI financial advisors exist. First mover advantage. Free tier for everyone, premium at 500 PKR per month for auto sync and advanced AI, business plans for freelancers, and enterprise white-label for banks.",
+  "Auto CFO: your AI Financial Twin. Built for Code-Storm 26, Fintech Track. Visit autonomous-cfo dot vercel dot app. No bank APIs, no credit card, 100 percent Pakistan. Thank you."
+];
+
+function pickVoice(voices) {
+  return voices.find(x => x.name === 'Google UK English Female')
+      || voices.find(x => x.name.includes('Google UK') && x.name.includes('Female'))
+      || voices.find(x => x.name.includes('Google UK'))
+      || voices.find(x => x.lang.startsWith('en-GB') && x.name.includes('Female'))
+      || voices.find(x => x.lang === 'en-GB')
+      || voices.find(x => x.lang.startsWith('en'));
+}
+
+function speakSlide(index) {
+  if (currentUtterance) window.speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(narrations[index]);
+  if (voice) u.voice = voice;
+  currentUtterance = u;
+  window.speechSynthesis.speak(u);
+}
+
+function advanceSlide(next) {
+  slides[currentSlide].classList.remove('active');
+  currentSlide = next;
+  slides[currentSlide].classList.add('active');
+  speakSlide(next);
+}
+
+function update() {
+  if (!startTime) return;
+  const elapsed = (Date.now() - startTime) / 1000;
+  const m = Math.floor(elapsed / 60);
+  const s = Math.floor(elapsed % 60);
+  timerEl.textContent = m + ':' + (s < 10 ? '0' : '') + s;
+  progressEl.style.width = Math.min((elapsed / totalDuration) * 100, 100) + '%';
+
+  for (let i = timings.length - 1; i >= 0; i--) {
+    if (elapsed >= timings[i] && currentSlide !== i) {
+      advanceSlide(i);
+      break;
+    }
+  }
+
+  if (elapsed < totalDuration) requestAnimationFrame(update);
+}
+
+function start() {
+  if (started) return;
+  started = true;
+  // Pick voice
+  const v = window.speechSynthesis.getVoices();
+  voice = pickVoice(v);
+  // Remove overlay
+  overlay.style.opacity = '0';
+  setTimeout(() => overlay.style.display = 'none', 600);
+  // Start
+  startTime = Date.now();
+  speakSlide(0);
+  update();
+}
+
+// Click anywhere to start (user interaction = speech allowed)
+overlay.addEventListener('click', start);
+
+// Refresh voice when they load async
+window.speechSynthesis.onvoiceschanged = () => {
+  const v = window.speechSynthesis.getVoices();
+  const found = pickVoice(v);
+  if (found) voice = found;
+};
+</script>
+</body>
+</html>
