@@ -17,7 +17,7 @@ function CustomTooltip({ active, payload, label }: any) {
       <p className="text-zinc-300 font-medium mb-1">{label}</p>
       {payload.map((entry: any) => (
         <p key={entry.name} style={{ color: entry.color }} className="font-semibold">
-          {entry.name === 'income' ? 'Income' : 'Expense'}: ${entry.value.toLocaleString('en-US', { minimumFractionDigits: 2 })}
+          {entry.name === 'income' ? 'Income' : 'Expense'}: PKR {Math.round(entry.value).toLocaleString()}
         </p>
       ))}
     </div>

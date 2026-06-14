@@ -18,7 +18,7 @@ function CustomTooltip({ active, payload }: any) {
   return (
     <div className="bg-zinc-900 border border-zinc-700 rounded-lg px-3 py-2 text-sm shadow-xl">
       <p className="text-zinc-300">{data.category}</p>
-      <p className="text-white font-semibold">${data.total.toLocaleString('en-US', { minimumFractionDigits: 2 })}</p>
+      <p className="text-white font-semibold">PKR {Math.round(data.total).toLocaleString()}</p>
       <p className="text-zinc-400">{data.percentage.toFixed(1)}%</p>
     </div>
   );

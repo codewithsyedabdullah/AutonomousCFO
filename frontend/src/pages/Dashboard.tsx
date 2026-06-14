@@ -119,15 +119,15 @@ export default function Dashboard() {
             <div className="space-y-4">
               <div>
                 <p className="text-xs text-zinc-500">Monthly Income</p>
-                <p className="text-lg font-bold text-success">${data.monthlyIncome.toLocaleString('en-US', { minimumFractionDigits: 2 })}</p>
+                <p className="text-lg font-bold text-success">PKR {Math.round(data.monthlyIncome).toLocaleString()}</p>
               </div>
               <div>
                 <p className="text-xs text-zinc-500">Monthly Expenses</p>
-                <p className="text-lg font-bold text-danger">${data.monthlyExpenses.toLocaleString('en-US', { minimumFractionDigits: 2 })}</p>
+                <p className="text-lg font-bold text-danger">PKR {Math.round(data.monthlyExpenses).toLocaleString()}</p>
               </div>
               <div>
                 <p className="text-xs text-zinc-500">Monthly Burn Rate</p>
-                <p className="text-lg font-bold text-warning">${data.monthlyExpenses.toLocaleString('en-US', { minimumFractionDigits: 2 })}</p>
+                <p className="text-lg font-bold text-warning">PKR {Math.round(data.monthlyExpenses).toLocaleString()}</p>
               </div>
             </div>
           </div>
@@ -155,7 +155,7 @@ export default function Dashboard() {
           <div className="flex items-center justify-between mb-2">
             <span className="text-white font-semibold">{data.activeGoal.name}</span>
             <span className="text-sm text-zinc-400">
-              ${data.activeGoal.current_amount.toLocaleString('en-US')} / ${data.activeGoal.target_amount.toLocaleString('en-US')}
+              PKR {Math.round(data.activeGoal.current_amount).toLocaleString()} / PKR {Math.round(data.activeGoal.target_amount).toLocaleString()}
             </span>
           </div>
           <div className="w-full bg-zinc-800 rounded-full h-3">

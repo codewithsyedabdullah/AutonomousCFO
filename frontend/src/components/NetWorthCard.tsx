@@ -7,7 +7,7 @@ interface Props {
 
 function formatCurrency(value: number): string {
   const abs = Math.abs(value);
-  const formatted = '$' + abs.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  const formatted = 'PKR ' + Math.round(abs).toLocaleString();
   return value < 0 ? '-' + formatted : formatted;
 }
 

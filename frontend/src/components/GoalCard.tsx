@@ -16,7 +16,7 @@ interface Props {
 }
 
 function formatCurrency(value: number): string {
-  return '$' + value.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  return 'PKR ' + Math.round(value).toLocaleString();
 }
 
 function formatDate(dateStr: string): string {

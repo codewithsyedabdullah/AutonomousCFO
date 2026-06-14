@@ -55,7 +55,7 @@ export default function Simulator() {
     }
   };
 
-  const formatCurrency = (v: number) => '$' + v.toLocaleString('en-US', { minimumFractionDigits: 0 });
+  const formatCurrency = (v: number) => 'PKR ' + Math.round(v).toLocaleString();
 
   return (
     <div className="space-y-6">
