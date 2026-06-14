@@ -110,7 +110,7 @@ export default function Tax() {
       const url = window.URL.createObjectURL(new Blob([res.data]));
       const link = document.createElement('a');
       link.href = url;
-      link.setAttribute('download', `autocfo-tax-summary-${summary?.taxYear || 2025}.txt`);
+      link.setAttribute('download', `autocfo-tax-summary-${summary?.taxYear || 2025}.pdf`);
       document.body.appendChild(link);
       link.click();
       link.remove();

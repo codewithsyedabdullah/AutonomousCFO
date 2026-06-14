@@ -31,11 +31,13 @@ export default function Chat() {
     assistantContent.current = '';
 
     try {
-      const res = await fetch('/api/chat', {
+      const token = localStorage.getItem('token');
+      const baseUrl = import.meta.env.VITE_API_URL || '';
+      const res = await fetch(`${baseUrl}/chat`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
+          'Authorization': `Bearer ${token}`
         },
         body: JSON.stringify({ message: userMsg.content })
       });
