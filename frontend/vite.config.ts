@@ -6,10 +6,13 @@ export default defineConfig({
   server: {
     port: 5173,
     proxy: {
-      '/api': {
-        target: 'http://localhost:3001',
-        changeOrigin: true,
-      },
+      '/auth': { target: 'http://localhost:3001', changeOrigin: true },
+      '/transactions': { target: 'http://localhost:3001', changeOrigin: true },
+      '/goals': { target: 'http://localhost:3001', changeOrigin: true },
+      '/dashboard': { target: 'http://localhost:3001', changeOrigin: true },
+      '/simulator': { target: 'http://localhost:3001', changeOrigin: true },
+      '/chat': { target: 'http://localhost:3001', changeOrigin: true },
+      '/tax': { target: 'http://localhost:3001', changeOrigin: true },
     },
   },
 })
