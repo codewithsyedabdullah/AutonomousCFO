@@ -1,15 +1,15 @@
 import { getDb } from './connection';
 
-export function initSchema(): void {
+export async function initSchema(): Promise<void> {
   const db = getDb();
 
-  db.exec(`
+  await db.exec(`
     CREATE TABLE IF NOT EXISTS users (
       id TEXT PRIMARY KEY,
       email TEXT UNIQUE NOT NULL,
       password_hash TEXT NOT NULL,
       name TEXT,
-      created_at TEXT DEFAULT (datetime('now'))
+      created_at TIMESTAMP DEFAULT NOW()
     );
 
     CREATE TABLE IF NOT EXISTS transactions (
@@ -19,9 +19,9 @@ export function initSchema(): void {
       type TEXT CHECK(type IN ('income','expense')) NOT NULL,
       category TEXT NOT NULL,
       merchant TEXT,
-      date TEXT NOT NULL,
+      date DATE NOT NULL,
       notes TEXT,
-      created_at TEXT DEFAULT (datetime('now'))
+      created_at TIMESTAMP DEFAULT NOW()
     );
 
     CREATE TABLE IF NOT EXISTS goals (
@@ -31,14 +31,14 @@ export function initSchema(): void {
       target_amount REAL NOT NULL,
       current_amount REAL DEFAULT 0,
       target_date TEXT,
-      created_at TEXT DEFAULT (datetime('now'))
+      created_at TIMESTAMP DEFAULT NOW()
     );
 
     CREATE TABLE IF NOT EXISTS ai_conversations (
       id TEXT PRIMARY KEY,
       user_id TEXT NOT NULL REFERENCES users(id),
       messages_json TEXT DEFAULT '[]',
-      created_at TEXT DEFAULT (datetime('now'))
+      created_at TIMESTAMP DEFAULT NOW()
     );
 
     CREATE TABLE IF NOT EXISTS tax_profiles (
@@ -52,8 +52,8 @@ export function initSchema(): void {
       extra_deductions REAL DEFAULT 0,
       exemption_claims TEXT,
       filing_status TEXT DEFAULT 'individual',
-      created_at TEXT DEFAULT (datetime('now')),
-      updated_at TEXT DEFAULT (datetime('now'))
+      created_at TIMESTAMP DEFAULT NOW(),
+      updated_at TIMESTAMP DEFAULT NOW()
     );
   `);
 }

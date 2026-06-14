@@ -1,77 +1,41 @@
-import initSqlJs, { Database as SqlJsDb, SqlJsStatic } from 'sql.js';
-import fs from 'fs';
-import path from 'path';
+import { Pool } from 'pg';
+import { config } from '../config';
 
-let SQL: SqlJsStatic | null = null;
-let db: SqlJsDb | null = null;
-let dbPath: string = '';
+let pool: Pool | null = null;
 
-function persist() {
-  if (db && dbPath) {
-    const data = db.export();
-    const buffer = Buffer.from(data);
-    fs.writeFileSync(dbPath, buffer);
-  }
+export async function initDb(): Promise<void> {
+  pool = new Pool({ connectionString: config.DATABASE_URL, max: 10 });
+  const client = await pool.connect();
+  client.release();
+}
+
+function convertParams(sql: string, params: any[]): { text: string; values: any[] } {
+  if (params.length === 0) return { text: sql, values: [] };
+  let i = 0;
+  const text = sql.replace(/\?/g, () => `$${++i}`);
+  return { text, values: params };
 }
 
 export class Statement {
   private sql: string;
-  private stmt: any = null;
+  constructor(sql: string) { this.sql = sql; }
 
-  constructor(sql: string) {
-    this.sql = sql;
+  async all(...params: any[]): Promise<any[]> {
+    const { text, values } = convertParams(this.sql, params);
+    const result = await pool!.query(text, values);
+    return result.rows;
   }
 
-  private ensureStmt() {
-    if (!this.stmt) {
-      this.stmt = db!.prepare(this.sql);
-    }
-    return this.stmt;
+  async get(...params: any[]): Promise<any> {
+    const { text, values } = convertParams(this.sql, params);
+    const result = await pool!.query(text, values);
+    return result.rows[0] || undefined;
   }
 
-  all(...params: any[]): any[] {
-    try {
-      const s = this.ensureStmt();
-      if (params.length > 0) s.bind(params);
-      const rows: any[] = [];
-      while (s.step()) {
-        rows.push(s.getAsObject());
-      }
-      s.reset();
-      return rows;
-    } catch (err) {
-      console.error('SQLite all error:', err);
-      return [];
-    }
-  }
-
-  get(...params: any[]): any {
-    try {
-      const s = this.ensureStmt();
-      if (params.length > 0) s.bind(params);
-      const hasRow = s.step();
-      if (!hasRow) { s.reset(); return undefined; }
-      const row = s.getAsObject();
-      s.reset();
-      return row;
-    } catch (err) {
-      console.error('SQLite get error:', err);
-      return undefined;
-    }
-  }
-
-  run(...params: any[]): { changes: number; lastInsertRowid: number } {
-    try {
-      const s = this.ensureStmt();
-      if (params.length > 0) s.bind(params);
-      s.step();
-      s.reset();
-      persist();
-      return { changes: db!.getRowsModified(), lastInsertRowid: 0 };
-    } catch (err) {
-      console.error('SQLite run error:', err);
-      return { changes: 0, lastInsertRowid: 0 };
-    }
+  async run(...params: any[]): Promise<{ changes: number }> {
+    const { text, values } = convertParams(this.sql, params);
+    const result = await pool!.query(text, values);
+    return { changes: result.rowCount || 0 };
   }
 }
 
@@ -79,27 +43,11 @@ export function prepare(sql: string): Statement {
   return new Statement(sql);
 }
 
-export function exec(sql: string): void {
-  db!.exec(sql);
-  persist();
+export async function exec(sql: string): Promise<void> {
+  await pool!.query(sql);
 }
 
 export function getDb() {
-  if (!db) throw new Error('Database not initialized yet');
+  if (!pool) throw new Error('Database not initialized');
   return { prepare, exec };
-}
-
-export async function initDb(dbFile?: string): Promise<void> {
-  SQL = await initSqlJs();
-  dbPath = dbFile || './data/autocfo.db';
-  const dir = path.dirname(dbPath);
-  if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
-
-  if (fs.existsSync(dbPath)) {
-    const buffer = fs.readFileSync(dbPath);
-    db = new SQL.Database(buffer);
-  } else {
-    db = new SQL.Database();
-  }
-  db.run('PRAGMA foreign_keys = ON');
 }

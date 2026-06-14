@@ -1,3 +1,4 @@
+import 'express-async-errors';
 import dotenv from 'dotenv';
 dotenv.config();
 
@@ -17,14 +18,14 @@ import chatRoutes from './routes/chat';
 import taxRoutes from './routes/tax';
 
 async function start() {
-  await initDb(config.DB_PATH);
-  initSchema();
+  await initDb();
+  await initSchema();
 
   const app = express();
 
   app.use(cors({ origin: config.CORS_ORIGIN, credentials: true }));
   app.use(helmet({ contentSecurityPolicy: false }));
-  app.use(express.json());
+  app.use(express.json({ limit: '10mb' }));
 
   app.get('/api/health', (_req, res) => res.json({ status: 'ok', timestamp: new Date().toISOString() }));
 

@@ -2,23 +2,22 @@ import { Router, Request, Response } from 'express';
 import { getDb } from '../db/connection';
 import { authMiddleware } from '../middleware/auth';
 import { projectSaveMore, projectMajorPurchase, projectIncomeChange } from '../services/projections';
-import { calculateHealthScore } from '../services/healthScore';
 
 const router = Router();
 router.use(authMiddleware);
 
-function getCurrentBaseline(userId: string) {
+async function getCurrentBaseline(userId: string) {
   const db = getDb();
-  const totals = db.prepare(`
+  const totals = await db.prepare(`
     SELECT
       COALESCE(SUM(CASE WHEN type = 'income' THEN amount ELSE 0 END), 0) as income,
       COALESCE(SUM(CASE WHEN type = 'expense' THEN amount ELSE 0 END), 0) as expense
     FROM transactions WHERE user_id = ?
   `).get(userId) as any;
 
-  const monthlyData = db.prepare(`
+  const monthlyData = await db.prepare(`
     SELECT
-      strftime('%Y-%m', date) as month,
+      TO_CHAR(date, 'YYYY-MM') as month,
       SUM(CASE WHEN type = 'income' THEN amount ELSE 0 END) as income,
       SUM(CASE WHEN type = 'expense' THEN amount ELSE 0 END) as expense
     FROM transactions WHERE user_id = ?
@@ -28,7 +27,8 @@ function getCurrentBaseline(userId: string) {
   const avgIncome = monthlyData.length > 0 ? monthlyData.reduce((s: number, r: any) => s + (r.income || 0), 0) / monthlyData.length : 0;
   const avgExpenses = monthlyData.length > 0 ? monthlyData.reduce((s: number, r: any) => s + (r.expense || 0), 0) / monthlyData.length : 0;
   const savingsRate = avgIncome > 0 ? ((avgIncome - avgExpenses) / avgIncome) * 100 : 0;
-  const health = calculateHealthScore(userId);
+  const { calculateHealthScore } = await import('../services/healthScore');
+  const health = await calculateHealthScore(userId);
   const netWorth = (totals.income || 0) - (totals.expense || 0);
   const monthlySurplus = avgIncome - avgExpenses;
 
@@ -48,11 +48,11 @@ function combineProjections(baseline: any[], simulated: any[]) {
   return result;
 }
 
-function generateBaselineProjections(userId: string) {
+async function generateBaselineProjections(userId: string) {
   const db = getDb();
-  const monthlyData = db.prepare(`
+  const monthlyData = await db.prepare(`
     SELECT
-      strftime('%Y-%m', date) as month,
+      TO_CHAR(date, 'YYYY-MM') as month,
       SUM(CASE WHEN type = 'income' THEN amount ELSE 0 END) as income,
       SUM(CASE WHEN type = 'expense' THEN amount ELSE 0 END) as expense
     FROM transactions WHERE user_id = ?
@@ -62,7 +62,7 @@ function generateBaselineProjections(userId: string) {
   const avgIncome = monthlyData.length > 0 ? monthlyData.reduce((s: number, r: any) => s + (r.income || 0), 0) / monthlyData.length : 0;
   const avgExpenses = monthlyData.length > 0 ? monthlyData.reduce((s: number, r: any) => s + (r.expense || 0), 0) / monthlyData.length : 0;
 
-  const balance = db.prepare(`
+  const balance = await db.prepare(`
     SELECT COALESCE(SUM(CASE WHEN type = 'income' THEN amount ELSE 0 END), 0) - COALESCE(SUM(CASE WHEN type = 'expense' THEN amount ELSE 0 END), 0) as balance
     FROM transactions WHERE user_id = ?
   `).get(userId) as any;
@@ -77,77 +77,72 @@ function generateBaselineProjections(userId: string) {
   return projections;
 }
 
-router.post('/simulate', (req: Request, res: Response) => {
-  try {
-    const { scenario, params } = req.body;
-    const userId = req.user!.userId;
+router.post('/simulate', async (req: Request, res: Response) => {
+  const { scenario, params } = req.body;
+  const userId = req.user!.userId;
 
-    if (!scenario || !params) {
-      res.status(400).json({ error: 'scenario and params are required' });
-      return;
-    }
-
-    const baseline = getCurrentBaseline(userId);
-    const baselineProjections = generateBaselineProjections(userId);
-
-    let result: any;
-    switch (scenario) {
-      case 'saveMore': {
-        const { extraMonthly } = params;
-        if (extraMonthly === undefined) {
-          res.status(400).json({ error: 'extraMonthly is required for saveMore scenario' });
-          return;
-        }
-        const proj = projectSaveMore(userId, parseFloat(extraMonthly));
-        result = {
-          monthsToGoal: proj.monthsToGoal,
-          newSavingsRate: proj.newSavingsRate,
-          healthScoreDelta: proj.newSavingsRate - baseline.savingsRate,
-          projections: combineProjections(baselineProjections, proj.projections),
-        };
-        break;
-      }
-      case 'majorPurchase': {
-        const { cost, monthlyLoan } = params;
-        if (cost === undefined || monthlyLoan === undefined) {
-          res.status(400).json({ error: 'cost and monthlyLoan are required for majorPurchase scenario' });
-          return;
-        }
-        const proj = projectMajorPurchase(userId, parseFloat(cost), parseFloat(monthlyLoan));
-        result = {
-          cashFlowImpact: proj.cashFlowImpact,
-          newNetWorth: proj.newNetWorth,
-          runway: proj.runwayMonths,
-          projections: combineProjections(baselineProjections, proj.projections),
-        };
-        break;
-      }
-      case 'incomeChange': {
-        const { percentChange } = params;
-        if (percentChange === undefined) {
-          res.status(400).json({ error: 'percentChange is required for incomeChange scenario' });
-          return;
-        }
-        const proj = projectIncomeChange(userId, parseFloat(percentChange));
-        result = {
-          revisedSurplus: proj.revisedSurplus,
-          timeToGoal: proj.timeToGoal,
-          newHealthScore: baseline.healthScore + (proj.revisedSurplus > 0 ? 5 : -5),
-          projections: combineProjections(baselineProjections, proj.projections),
-        };
-        break;
-      }
-      default:
-        res.status(400).json({ error: `Unknown scenario: ${scenario}` });
-        return;
-    }
-
-    result.currentBaseline = baseline;
-    res.json(result);
-  } catch (err) {
-    console.error('Simulator error:', err);
-    res.status(500).json({ error: 'Internal server error' });
+  if (!scenario || !params) {
+    res.status(400).json({ error: 'scenario and params are required' });
+    return;
   }
+
+  const baseline = await getCurrentBaseline(userId);
+  const baselineProjections = await generateBaselineProjections(userId);
+
+  let result: any;
+  switch (scenario) {
+    case 'saveMore': {
+      const { extraMonthly } = params;
+      if (extraMonthly === undefined) {
+        res.status(400).json({ error: 'extraMonthly is required for saveMore scenario' });
+        return;
+      }
+      const proj = await projectSaveMore(userId, parseFloat(extraMonthly));
+      result = {
+        monthsToGoal: proj.monthsToGoal,
+        newSavingsRate: proj.newSavingsRate,
+        healthScoreDelta: proj.newSavingsRate - baseline.savingsRate,
+        projections: combineProjections(baselineProjections, proj.projections),
+      };
+      break;
+    }
+    case 'majorPurchase': {
+      const { cost, monthlyLoan } = params;
+      if (cost === undefined || monthlyLoan === undefined) {
+        res.status(400).json({ error: 'cost and monthlyLoan are required for majorPurchase scenario' });
+        return;
+      }
+      const proj = await projectMajorPurchase(userId, parseFloat(cost), parseFloat(monthlyLoan));
+      result = {
+        cashFlowImpact: proj.cashFlowImpact,
+        newNetWorth: proj.newNetWorth,
+        runway: proj.runwayMonths,
+        projections: combineProjections(baselineProjections, proj.projections),
+      };
+      break;
+    }
+    case 'incomeChange': {
+      const { percentChange } = params;
+      if (percentChange === undefined) {
+        res.status(400).json({ error: 'percentChange is required for incomeChange scenario' });
+        return;
+      }
+      const proj = await projectIncomeChange(userId, parseFloat(percentChange));
+      result = {
+        revisedSurplus: proj.revisedSurplus,
+        timeToGoal: proj.timeToGoal,
+        newHealthScore: baseline.healthScore + (proj.revisedSurplus > 0 ? 5 : -5),
+        projections: combineProjections(baselineProjections, proj.projections),
+      };
+      break;
+    }
+    default:
+      res.status(400).json({ error: `Unknown scenario: ${scenario}` });
+      return;
+  }
+
+  result.currentBaseline = baseline;
+  res.json(result);
 });
 
 export default router;

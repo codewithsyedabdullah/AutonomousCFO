@@ -5,11 +5,11 @@ interface ProjectionRow {
   balance: number;
 }
 
-function getMonthlyAverages(userId: string): { avgIncome: number; avgExpenses: number } {
+async function getMonthlyAverages(userId: string): Promise<{ avgIncome: number; avgExpenses: number }> {
   const db = getDb();
-  const rows = db.prepare(`
+  const rows = await db.prepare(`
     SELECT
-      strftime('%Y-%m', date) as month,
+      TO_CHAR(date, 'YYYY-MM') as month,
       SUM(CASE WHEN type = 'income' THEN amount ELSE 0 END) as income,
       SUM(CASE WHEN type = 'expense' THEN amount ELSE 0 END) as expense
     FROM transactions
@@ -29,9 +29,9 @@ function getMonthlyAverages(userId: string): { avgIncome: number; avgExpenses: n
   };
 }
 
-function getCurrentBalance(userId: string): number {
+async function getCurrentBalance(userId: string): Promise<number> {
   const db = getDb();
-  const result = db.prepare(`
+  const result = await db.prepare(`
     SELECT
       COALESCE(SUM(CASE WHEN type = 'income' THEN amount ELSE 0 END), 0) -
       COALESCE(SUM(CASE WHEN type = 'expense' THEN amount ELSE 0 END), 0) as balance
@@ -41,9 +41,9 @@ function getCurrentBalance(userId: string): number {
   return result?.balance || 0;
 }
 
-function getTotalGoal(userId: string): { current: number; target: number } {
+async function getTotalGoal(userId: string): Promise<{ current: number; target: number }> {
   const db = getDb();
-  const goals = db.prepare('SELECT current_amount, target_amount FROM goals WHERE user_id = ?').all(userId) as any[];
+  const goals = await db.prepare('SELECT current_amount, target_amount FROM goals WHERE user_id = ?').all(userId) as any[];
   if (goals.length === 0) return { current: 0, target: 0 };
   return {
     current: goals.reduce((s, g) => s + g.current_amount, 0),
@@ -72,10 +72,10 @@ export interface SaveMoreResult {
   projections: ProjectionRow[];
 }
 
-export function projectSaveMore(userId: string, extraMonthly: number): SaveMoreResult {
-  const { avgIncome, avgExpenses } = getMonthlyAverages(userId);
-  const balance = getCurrentBalance(userId);
-  const goals = getTotalGoal(userId);
+export async function projectSaveMore(userId: string, extraMonthly: number): Promise<SaveMoreResult> {
+  const { avgIncome, avgExpenses } = await getMonthlyAverages(userId);
+  const balance = await getCurrentBalance(userId);
+  const goals = await getTotalGoal(userId);
 
   const newSavingsRate = avgIncome > 0 ? ((avgIncome - avgExpenses + extraMonthly) / avgIncome) * 100 : 0;
   const monthlySurplus = avgIncome - avgExpenses + extraMonthly;
@@ -97,9 +97,9 @@ export interface MajorPurchaseResult {
   projections: ProjectionRow[];
 }
 
-export function projectMajorPurchase(userId: string, cost: number, monthlyLoan: number): MajorPurchaseResult {
-  const { avgIncome, avgExpenses } = getMonthlyAverages(userId);
-  const balance = getCurrentBalance(userId);
+export async function projectMajorPurchase(userId: string, cost: number, monthlyLoan: number): Promise<MajorPurchaseResult> {
+  const { avgIncome, avgExpenses } = await getMonthlyAverages(userId);
+  const balance = await getCurrentBalance(userId);
 
   const monthlySurplus = avgIncome - avgExpenses - monthlyLoan;
   const newNetWorth = balance - cost;
@@ -120,10 +120,10 @@ export interface IncomeChangeResult {
   projections: ProjectionRow[];
 }
 
-export function projectIncomeChange(userId: string, percentChange: number): IncomeChangeResult {
-  const { avgIncome, avgExpenses } = getMonthlyAverages(userId);
-  const balance = getCurrentBalance(userId);
-  const goals = getTotalGoal(userId);
+export async function projectIncomeChange(userId: string, percentChange: number): Promise<IncomeChangeResult> {
+  const { avgIncome, avgExpenses } = await getMonthlyAverages(userId);
+  const balance = await getCurrentBalance(userId);
+  const goals = await getTotalGoal(userId);
 
   const newIncome = avgIncome * (1 + percentChange / 100);
   const revisedSurplus = newIncome - avgExpenses;

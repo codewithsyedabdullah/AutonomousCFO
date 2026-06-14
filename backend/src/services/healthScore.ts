@@ -18,12 +18,12 @@ function getBand(score: number): { band: string; label: string } {
   return { band: 'red', label: 'Critical' };
 }
 
-export function calculateHealthScore(userId: string): { score: HealthResult | null; message?: string } {
+export async function calculateHealthScore(userId: string): Promise<{ score: HealthResult | null; message?: string }> {
   const db = getDb();
 
-  const monthlyData = db.prepare(`
+  const monthlyData = await db.prepare(`
     SELECT
-      strftime('%Y-%m', date) as month,
+      TO_CHAR(date, 'YYYY-MM') as month,
       SUM(CASE WHEN type = 'income' THEN amount ELSE 0 END) as income,
       SUM(CASE WHEN type = 'expense' THEN amount ELSE 0 END) as expense
     FROM transactions
@@ -61,7 +61,7 @@ export function calculateHealthScore(userId: string): { score: HealthResult | nu
   const incomeRegularity = avgInc > 0 ? (1 - (incomeStdDev / avgInc)) * 100 : 100;
   const incomeRegularityClamped = Math.max(0, Math.min(100, incomeRegularity));
 
-  const goals = db.prepare('SELECT current_amount, target_amount FROM goals WHERE user_id = ?').all(userId) as any[];
+  const goals = await db.prepare('SELECT current_amount, target_amount FROM goals WHERE user_id = ?').all(userId) as any[];
   let goalProgress = 0;
   if (goals.length > 0) {
     const goalRatios = goals.map(g => g.target_amount > 0 ? g.current_amount / g.target_amount : 0);
