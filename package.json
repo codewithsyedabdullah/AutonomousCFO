@@ -1,0 +1,6 @@
+{
+  "name": "autocfo",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Triggers Node.js detection for Railway Nixpacks"
+}
