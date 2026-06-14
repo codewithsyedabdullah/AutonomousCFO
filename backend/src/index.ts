@@ -17,7 +17,7 @@ import chatRoutes from './routes/chat';
 import taxRoutes from './routes/tax';
 
 async function start() {
-  await initDb();
+  await initDb(config.DB_PATH);
   initSchema();
 
   const app = express();

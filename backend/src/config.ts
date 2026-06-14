@@ -9,5 +9,5 @@ export const config = {
   AI_API_BASE_URL: process.env.AI_API_BASE_URL || 'https://api.groq.com/openai/v1',
   AI_MODEL: process.env.AI_MODEL || 'llama-3.3-70b-versatile',
   CORS_ORIGIN: process.env.CORS_ORIGIN || 'http://localhost:5173',
-  DB_PATH: process.env.DATABASE_URL || './data/autocfo.db',
+  DB_PATH: process.env.DB_PATH || '/data/autocfo.db',
 };
