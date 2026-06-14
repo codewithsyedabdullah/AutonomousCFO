@@ -60,26 +60,26 @@ export default function Simulator() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-white">Scenario Simulator</h1>
-        <p className="text-zinc-400 text-sm mt-1">See the quantified impact of your financial decisions</p>
+        <h1 className="text-xl sm:text-2xl font-bold text-white">Scenario Simulator</h1>
+        <p className="text-zinc-400 text-xs sm:text-sm mt-1">See the quantified impact of your financial decisions</p>
       </div>
 
-      <div className="flex gap-3 flex-wrap">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
         {scenarios.map(({ key, label, icon: Icon, desc }) => (
           <button
             key={key}
             onClick={() => { setActiveScenario(key); setResult(null); }}
-            className={`flex-1 min-w-[200px] card text-left transition-all ${
+            className={`card text-left transition-all ${
               activeScenario === key ? 'border-primary/50 ring-1 ring-primary/30' : ''
             }`}
           >
-            <div className="flex items-center gap-3 mb-2">
-              <div className="w-8 h-8 rounded-lg bg-primary/20 flex items-center justify-center">
-                <Icon size={18} className="text-primary" />
+            <div className="flex items-center gap-2 sm:gap-3 mb-1 sm:mb-2">
+              <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-primary/20 flex items-center justify-center flex-shrink-0">
+                <Icon size={16} className="text-primary" />
               </div>
-              <span className="font-semibold text-white">{label}</span>
+              <span className="text-sm sm:text-base font-semibold text-white">{label}</span>
             </div>
-            <p className="text-xs text-zinc-500">{desc}</p>
+            <p className="text-[10px] sm:text-xs text-zinc-500">{desc}</p>
           </button>
         ))}
       </div>

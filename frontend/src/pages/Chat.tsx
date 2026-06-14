@@ -119,27 +119,27 @@ export default function Chat() {
   };
 
   return (
-    <div className="flex flex-col h-[calc(100vh-6rem)]">
+    <div className="flex flex-col h-[calc(100dvh-8rem)] sm:h-[calc(100vh-7rem)] lg:h-[calc(100vh-6rem)]">
       <div>
-        <h1 className="text-2xl font-bold text-white">AI CFO Chat</h1>
-        <p className="text-zinc-400 text-sm mt-1">Ask your Financial Twin anything</p>
+        <h1 className="text-xl sm:text-2xl font-bold text-white">AI CFO Chat</h1>
+        <p className="text-zinc-400 text-xs sm:text-sm mt-1">Ask your Financial Twin anything</p>
       </div>
 
-      <div className="flex-1 card mt-6 flex flex-col overflow-hidden">
-        <div className="flex-1 overflow-y-auto space-y-4 pr-2 mb-4 scroll-smooth">
+      <div className="flex-1 card mt-3 sm:mt-6 flex flex-col overflow-hidden">
+        <div className="flex-1 overflow-y-auto space-y-3 sm:space-y-4 pr-1 sm:pr-2 mb-3 sm:mb-4 scroll-smooth">
           {messages.map((msg, i) => (
             <div key={i} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-              <div className={`flex gap-3 max-w-[80%] ${msg.role === 'user' ? 'flex-row-reverse' : ''}`}>
-                <div className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 ${
+              <div className={`flex gap-2 sm:gap-3 max-w-[90%] sm:max-w-[80%] ${msg.role === 'user' ? 'flex-row-reverse' : ''}`}>
+                <div className={`w-6 h-6 sm:w-8 sm:h-8 rounded-lg flex items-center justify-center flex-shrink-0 ${
                   msg.role === 'user' ? 'bg-primary/20' : 'bg-zinc-800'
                 }`}>
                   {msg.role === 'user' ? (
-                    <User size={16} className="text-primary" />
+                    <User size={12} className="text-primary sm:w-4 sm:h-4" />
                   ) : (
-                    <Bot size={16} className="text-zinc-400" />
+                    <Bot size={12} className="text-zinc-400 sm:w-4 sm:h-4" />
                   )}
                 </div>
-                <div className={`rounded-xl px-4 py-3 text-sm leading-relaxed ${
+                <div className={`rounded-xl px-2.5 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm leading-relaxed ${
                   msg.role === 'user'
                     ? 'bg-primary/10 text-zinc-200 border border-primary/20'
                     : 'bg-zinc-800/50 text-zinc-300 border border-zinc-800'
@@ -152,12 +152,12 @@ export default function Chat() {
 
           {loading && (
             <div className="flex justify-start">
-              <div className="flex gap-3 max-w-[80%]">
-                <div className="w-8 h-8 rounded-lg bg-zinc-800 flex items-center justify-center">
-                  <Bot size={16} className="text-zinc-400" />
+              <div className="flex gap-2 sm:gap-3 max-w-[90%] sm:max-w-[80%]">
+                <div className="w-6 h-6 sm:w-8 sm:h-8 rounded-lg bg-zinc-800 flex items-center justify-center">
+                  <Bot size={12} className="text-zinc-400 sm:w-4 sm:h-4" />
                 </div>
-                <div className="bg-zinc-800/50 border border-zinc-800 rounded-xl px-4 py-3">
-                  <Loader2 size={18} className="animate-spin text-primary" />
+                <div className="bg-zinc-800/50 border border-zinc-800 rounded-xl px-3 sm:px-4 py-2 sm:py-3">
+                  <Loader2 size={16} className="animate-spin text-primary" />
                 </div>
               </div>
             </div>
@@ -165,8 +165,8 @@ export default function Chat() {
 
           {error && (
             <div className="flex justify-center">
-              <div className="flex items-center gap-2 bg-red-900/30 border border-red-800 text-red-400 text-sm rounded-lg px-4 py-2">
-                <AlertCircle size={16} /> {error}
+              <div className="flex items-center gap-2 bg-red-900/30 border border-red-800 text-red-400 text-xs sm:text-sm rounded-lg px-3 sm:px-4 py-2">
+                <AlertCircle size={14} /> {error}
               </div>
             </div>
           )}
@@ -174,22 +174,22 @@ export default function Chat() {
           <div ref={bottomRef} />
         </div>
 
-        <div className="flex items-end gap-3 pt-3 border-t border-zinc-800">
+        <div className="flex items-end gap-2 sm:gap-3 pt-2 sm:pt-3 border-t border-zinc-800">
           <textarea
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={handleKeyDown}
-            className="input-field flex-1 resize-none !min-h-[44px] !py-3"
-            placeholder="Ask about your finances... (Shift+Enter for new line)"
+            className="input-field flex-1 resize-none !min-h-[40px] sm:!min-h-[44px] !py-2 sm:!py-3 text-xs sm:text-sm"
+            placeholder="Ask about your finances..."
             disabled={loading}
             rows={1}
           />
           <button
             onClick={handleSend}
             disabled={!input.trim() || loading}
-            className="btn-primary !p-3 !rounded-xl"
+            className="btn-primary !p-2 sm:!p-3 !rounded-xl"
           >
-            <Send size={18} />
+            <Send size={16} />
           </button>
         </div>
       </div>

@@ -115,13 +115,13 @@ export default function Transactions() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-bold text-white">Transactions</h1>
-          <p className="text-zinc-400 text-sm mt-1">Track your income and expenses</p>
+          <h1 className="text-xl sm:text-2xl font-bold text-white">Transactions</h1>
+          <p className="text-zinc-400 text-xs sm:text-sm mt-1">Track your income and expenses</p>
         </div>
-        <button onClick={() => setShowForm(!showForm)} className="btn-primary flex items-center gap-2">
-          {showForm ? <X size={18} /> : <Plus size={18} />}
+        <button onClick={() => setShowForm(!showForm)} className="btn-primary flex items-center gap-2 text-xs sm:text-sm self-start sm:self-auto">
+          {showForm ? <X size={16} /> : <Plus size={16} />}
           {showForm ? 'Cancel' : 'Add Transaction'}
         </button>
       </div>
@@ -196,13 +196,13 @@ export default function Transactions() {
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-sm font-medium text-zinc-400 uppercase tracking-wider">Import Financial Documents</h3>
         </div>
-        <form onSubmit={handleCsvUpload} className="flex items-center gap-4">
-          <input type="file" ref={fileRef} accept=".csv,.pdf,.doc,.docx,.xls,.xlsx,.jpg,.jpeg,.png,.txt" className="text-sm text-zinc-400 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-zinc-800 file:text-zinc-300 hover:file:bg-zinc-700" />
-          <button type="submit" className="btn-secondary flex items-center gap-2 text-sm">
-            <Upload size={16} /> Upload Document
+        <form onSubmit={handleCsvUpload} className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+          <input type="file" ref={fileRef} accept=".csv,.pdf,.doc,.docx,.xls,.xlsx,.jpg,.jpeg,.png,.txt" className="text-xs sm:text-sm text-zinc-400 file:mr-3 file:py-1.5 sm:file:py-2 file:px-3 sm:file:px-4 file:rounded-lg file:border-0 file:text-xs sm:file:text-sm file:font-medium file:bg-zinc-800 file:text-zinc-300 hover:file:bg-zinc-700 w-full sm:w-auto" />
+          <button type="submit" className="btn-secondary flex items-center gap-2 text-xs sm:text-sm justify-center">
+            <Upload size={14} /> Upload
           </button>
         </form>
-        <p className="text-xs text-zinc-600 mt-2">Accepted: CSV, PDF, Word, Excel, images, text files. CSV files are auto-parsed.</p>
+        <p className="text-[10px] sm:text-xs text-zinc-600 mt-2">Accepted: CSV, PDF, Word, Excel, images, text files. CSV files are auto-parsed.</p>
       </div>
 
       <div className="card">
@@ -214,16 +214,16 @@ export default function Transactions() {
             <p className="text-zinc-500">No transactions yet. Add your first one above.</p>
           </div>
         ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full">
+          <div className="table-wrap">
+            <table className="w-full table-mobile">
               <thead>
                 <tr className="border-b border-zinc-800 text-left">
-                  <th className="pb-3 text-xs text-zinc-500 font-medium uppercase tracking-wider px-4">Type</th>
-                  <th className="pb-3 text-xs text-zinc-500 font-medium uppercase tracking-wider px-4">Category</th>
-                  <th className="pb-3 text-xs text-zinc-500 font-medium uppercase tracking-wider px-4">Amount</th>
-                  <th className="pb-3 text-xs text-zinc-500 font-medium uppercase tracking-wider px-4">Merchant</th>
-                  <th className="pb-3 text-xs text-zinc-500 font-medium uppercase tracking-wider px-4">Date</th>
-                  <th className="pb-3 text-xs text-zinc-500 font-medium uppercase tracking-wider px-4"></th>
+                  <th className="pb-3 text-xs text-zinc-500 font-medium uppercase tracking-wider px-2 sm:px-4">Type</th>
+                  <th className="pb-3 text-xs text-zinc-500 font-medium uppercase tracking-wider px-2 sm:px-4">Category</th>
+                  <th className="pb-3 text-xs text-zinc-500 font-medium uppercase tracking-wider px-2 sm:px-4">Amount</th>
+                  <th className="pb-3 text-xs text-zinc-500 font-medium uppercase tracking-wider px-2 sm:px-4 hide-mobile">Merchant</th>
+                  <th className="pb-3 text-xs text-zinc-500 font-medium uppercase tracking-wider px-2 sm:px-4 hide-mobile">Date</th>
+                  <th className="pb-3 text-xs text-zinc-500 font-medium uppercase tracking-wider px-2 sm:px-4"></th>
                 </tr>
               </thead>
               <tbody>

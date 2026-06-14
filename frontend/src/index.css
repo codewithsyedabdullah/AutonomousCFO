@@ -3,6 +3,7 @@
 @tailwind utilities;
 
 @layer base {
+  html { -webkit-text-size-adjust: 100%; }
   body {
     background-color: hsl(150, 20%, 5%);
     color: hsl(45, 30%, 90%);
@@ -10,28 +11,11 @@
     -webkit-font-smoothing: antialiased;
   }
 
-  ::-webkit-scrollbar {
-    width: 6px;
-    height: 6px;
-  }
-
-  ::-webkit-scrollbar-track {
-    background: transparent;
-  }
-
-  ::-webkit-scrollbar-thumb {
-    background: #27272a;
-    border-radius: 3px;
-  }
-
-  ::-webkit-scrollbar-thumb:hover {
-    background: #3f3f46;
-  }
-
-  * {
-    scrollbar-width: thin;
-    scrollbar-color: #27272a transparent;
-  }
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: #27272a; border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: #3f3f46; }
+  * { scrollbar-width: thin; scrollbar-color: #27272a transparent; }
 }
 
 @layer components {
@@ -39,7 +23,7 @@
     background-color: hsla(150, 20%, 10%, 0.8);
     border: 1px solid rgba(255, 255, 255, 0.06);
     border-radius: 0.75rem;
-    padding: 1.5rem;
+    padding: clamp(0.75rem, 2vw, 1.5rem);
     backdrop-filter: blur(8px);
   }
 
@@ -47,45 +31,73 @@
     background-color: hsl(45, 70%, 75%);
     color: hsl(150, 20%, 5%);
     font-weight: 500;
-    padding: 0.625rem 1.25rem;
+    padding: clamp(0.4rem, 0.8vw, 0.625rem) clamp(0.75rem, 1.5vw, 1.25rem);
     border-radius: 0.5rem;
     transition: all 0.2s;
+    white-space: nowrap;
   }
-  .btn-primary:hover {
-    background-color: hsl(45, 60%, 65%);
-  }
-  .btn-primary:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-  }
+  .btn-primary:hover { background-color: hsl(45, 60%, 65%); }
+  .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
 
   .btn-secondary {
     background-color: hsla(45, 30%, 90%, 0.1);
     color: hsl(45, 30%, 90%);
     font-weight: 500;
-    padding: 0.625rem 1.25rem;
+    padding: clamp(0.4rem, 0.8vw, 0.625rem) clamp(0.75rem, 1.5vw, 1.25rem);
     border-radius: 0.5rem;
     transition: all 0.2s;
+    white-space: nowrap;
   }
-  .btn-secondary:hover {
-    background-color: hsla(45, 30%, 90%, 0.15);
-  }
+  .btn-secondary:hover { background-color: hsla(45, 30%, 90%, 0.15); }
 
   .input-field {
     width: 100%;
     background-color: hsla(45, 30%, 90%, 0.06);
     border: 1px solid hsla(45, 30%, 90%, 0.12);
     border-radius: 0.5rem;
-    padding: 0.625rem 1rem;
+    padding: clamp(0.4rem, 0.8vw, 0.625rem) clamp(0.6rem, 1vw, 1rem);
     color: hsl(45, 30%, 90%);
+    font-size: clamp(0.8rem, 1vw, 0.95rem);
     outline: none;
     transition: all 0.2s;
   }
-  .input-field::placeholder {
-    color: hsla(45, 30%, 90%, 0.3);
-  }
+  .input-field::placeholder { color: hsla(45, 30%, 90%, 0.3); }
   .input-field:focus {
     border-color: hsl(45, 70%, 75%);
     box-shadow: 0 0 0 1px hsl(45, 70%, 75%);
+  }
+
+  /* Responsive table: show as cards on mobile */
+  .table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  @media (max-width: 639px) {
+    .table-mobile thead { display: none; }
+    .table-mobile tbody, .table-mobile tr, .table-mobile td { display: block; }
+    .table-mobile tr {
+      background-color: hsla(150, 20%, 10%, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 0.5rem;
+      padding: 0.75rem;
+      margin-bottom: 0.5rem;
+    }
+    .table-mobile td {
+      padding: 0.25rem 0 !important;
+      border: none !important;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.8rem;
+    }
+    .table-mobile td::before {
+      content: attr(data-label);
+      color: hsl(45, 30%, 40%);
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      font-weight: 500;
+      flex-shrink: 0;
+      margin-right: 0.75rem;
+    }
+    .grid-responsive { grid-template-columns: 1fr !important; }
+    .hide-mobile { display: none !important; }
   }
 }

@@ -151,18 +151,18 @@ export default function Tax() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-amber-500/20 flex items-center justify-center">
-            <Receipt size={22} className="text-amber-400" />
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div className="flex items-center gap-2 sm:gap-3">
+          <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-amber-500/20 flex items-center justify-center flex-shrink-0">
+            <Receipt size={18} className="text-amber-400 sm:w-[22px] sm:h-[22px]" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-white">Tax Module</h1>
-            <p className="text-zinc-400 text-sm mt-1">Tax Year {summary?.taxYear || 2025} — FBR Pakistan</p>
+            <h1 className="text-lg sm:text-2xl font-bold text-white">Tax Module</h1>
+            <p className="text-zinc-400 text-xs sm:text-sm mt-0.5 sm:mt-1">Tax Year {summary?.taxYear || 2025} — FBR Pakistan</p>
           </div>
         </div>
-        <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium bg-amber-900/30 text-amber-400 border border-amber-800/50">
-          <Landmark size={14} /> New
+        <span className="inline-flex items-center gap-1.5 px-2 sm:px-3 py-1 sm:py-1.5 rounded-full text-[10px] sm:text-xs font-medium bg-amber-900/30 text-amber-400 border border-amber-800/50 self-start sm:self-auto">
+          <Landmark size={12} /> New
         </span>
       </div>
 
@@ -297,14 +297,14 @@ export default function Tax() {
             </button>
           ))}
         </div>
-        <div className="h-64 overflow-y-auto space-y-3 mb-4 p-3 bg-black/20 rounded-lg">
+        <div className="h-48 sm:h-64 overflow-y-auto space-y-2 sm:space-y-3 mb-4 p-2 sm:p-3 bg-black/20 rounded-lg">
           {chatMessages.map((msg, i) => (
             <div key={i} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-              <div className={`flex gap-2 max-w-[80%] ${msg.role === 'user' ? 'flex-row-reverse' : ''}`}>
-                <div className={`w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0 ${msg.role === 'user' ? 'bg-primary/20' : 'bg-zinc-800'}`}>
-                  {msg.role === 'user' ? <User size={14} className="text-primary" /> : <Bot size={14} className="text-zinc-400" />}
+              <div className={`flex gap-2 max-w-[90%] sm:max-w-[80%] ${msg.role === 'user' ? 'flex-row-reverse' : ''}`}>
+                <div className={`w-6 h-6 sm:w-7 sm:h-7 rounded-lg flex items-center justify-center flex-shrink-0 ${msg.role === 'user' ? 'bg-primary/20' : 'bg-zinc-800'}`}>
+                  {msg.role === 'user' ? <User size={11} className="text-primary" /> : <Bot size={11} className="text-zinc-400" />}
                 </div>
-                <div className={`rounded-xl px-3 py-2 text-sm leading-relaxed ${
+                <div className={`rounded-xl px-2.5 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm leading-relaxed ${
                   msg.role === 'user' ? 'bg-primary/10 text-zinc-200 border border-primary/20' : 'bg-zinc-800/50 text-zinc-300 border border-zinc-800'
                 }`}>
                   {msg.role === 'user' ? msg.content : <span dangerouslySetInnerHTML={{ __html: formatTaxMessage(msg.content) }} />}
@@ -315,7 +315,7 @@ export default function Tax() {
           {chatLoading && (
             <div className="flex justify-start">
               <div className="bg-zinc-800/50 border border-zinc-800 rounded-xl px-3 py-2">
-                <Loader2 size={16} className="animate-spin text-primary" />
+                <Loader2 size={14} className="animate-spin text-primary" />
               </div>
             </div>
           )}
@@ -323,9 +323,9 @@ export default function Tax() {
         <div className="flex gap-2">
           <textarea value={chatInput} onChange={(e) => setChatInput(e.target.value)}
             onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleChatSend(); } }}
-            className="input-field flex-1 resize-none !min-h-[44px] !py-3" placeholder="Ask your tax lawyer... (Shift+Enter for new line)" disabled={chatLoading} rows={1} />
+            className="input-field flex-1 resize-none !min-h-[40px] sm:!min-h-[44px] !py-2 sm:!py-3 text-xs sm:text-sm" placeholder="Ask your tax lawyer..." disabled={chatLoading} rows={1} />
           <button onClick={handleChatSend} disabled={!chatInput.trim() || chatLoading}
-            className="btn-primary !p-2.5 !rounded-lg"><MessageSquare size={18} /></button>
+            className="btn-primary !p-2 sm:!p-2.5 !rounded-lg"><MessageSquare size={16} /></button>
         </div>
       </div>
 

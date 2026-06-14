@@ -73,13 +73,13 @@ export default function Goals() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-bold text-white">Goals</h1>
-          <p className="text-zinc-400 text-sm mt-1">Track your financial goals</p>
+          <h1 className="text-xl sm:text-2xl font-bold text-white">Goals</h1>
+          <p className="text-zinc-400 text-xs sm:text-sm mt-1">Track your financial goals</p>
         </div>
-        <button onClick={() => setShowForm(!showForm)} className="btn-primary flex items-center gap-2">
-          {showForm ? <X size={18} /> : <Plus size={18} />}
+        <button onClick={() => setShowForm(!showForm)} className="btn-primary flex items-center gap-2 text-xs sm:text-sm self-start sm:self-auto">
+          {showForm ? <X size={16} /> : <Plus size={16} />}
           {showForm ? 'Cancel' : 'New Goal'}
         </button>
       </div>

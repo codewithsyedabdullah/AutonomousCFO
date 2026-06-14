@@ -81,13 +81,13 @@ export default function Dashboard() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
         <div>
-          <h1 className="text-2xl font-bold text-white">Financial Twin</h1>
-          <p className="text-zinc-400 text-sm mt-1">Your real-time financial replica</p>
+          <h1 className="text-xl sm:text-2xl font-bold text-white">Financial Twin</h1>
+          <p className="text-zinc-400 text-xs sm:text-sm mt-1">Your real-time financial replica</p>
         </div>
-        <div className="flex items-center gap-2 text-sm">
-          <span className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full font-medium ${
+        <div className="flex items-center gap-2 text-xs sm:text-sm">
+          <span className={`inline-flex items-center gap-1.5 px-2 sm:px-3 py-1 sm:py-1.5 rounded-full font-medium ${
             data.savingsRate >= 10
               ? 'bg-green-900/30 text-green-400 border border-green-800/50'
               : 'bg-red-900/30 text-red-400 border border-red-800/50'
@@ -110,7 +110,7 @@ export default function Dashboard() {
         <div className="lg:col-span-1 flex justify-center">
           <div className="card flex flex-col items-center">
             <h3 className="text-sm font-medium text-zinc-400 uppercase tracking-wider mb-3">Health Score</h3>
-            <HealthScoreGauge score={data.healthScore ?? 0} size={180} />
+            <HealthScoreGauge score={data.healthScore ?? 0} size={140} />
           </div>
         </div>
         <div className="lg:col-span-1">
@@ -165,24 +165,26 @@ export default function Dashboard() {
       )}
 
       {data.recentTransactions && data.recentTransactions.length > 0 && (
-        <div className="card">
+        <div className="card overflow-hidden">
           <h3 className="text-sm font-medium text-zinc-400 uppercase tracking-wider mb-4">Recent Transactions</h3>
-          <table className="w-full">
-            <thead>
-              <tr className="border-b border-zinc-800 text-left">
-                <th className="pb-2 text-xs text-zinc-500 font-medium uppercase tracking-wider px-4">Type</th>
-                <th className="pb-2 text-xs text-zinc-500 font-medium uppercase tracking-wider px-4">Category</th>
-                <th className="pb-2 text-xs text-zinc-500 font-medium uppercase tracking-wider px-4">Amount</th>
-                <th className="pb-2 text-xs text-zinc-500 font-medium uppercase tracking-wider px-4">Merchant</th>
-                <th className="pb-2 text-xs text-zinc-500 font-medium uppercase tracking-wider px-4">Date</th>
-              </tr>
-            </thead>
-            <tbody>
-              {data.recentTransactions.map((tx: any) => (
-                <TransactionRow key={tx.id} transaction={tx} onDelete={() => {}} />
-              ))}
-            </tbody>
-          </table>
+          <div className="table-wrap">
+            <table className="w-full table-mobile">
+              <thead>
+                <tr className="border-b border-zinc-800 text-left">
+                  <th className="pb-2 text-xs text-zinc-500 font-medium uppercase tracking-wider px-2 sm:px-4">Type</th>
+                  <th className="pb-2 text-xs text-zinc-500 font-medium uppercase tracking-wider px-2 sm:px-4">Category</th>
+                  <th className="pb-2 text-xs text-zinc-500 font-medium uppercase tracking-wider px-2 sm:px-4">Amount</th>
+                  <th className="pb-2 text-xs text-zinc-500 font-medium uppercase tracking-wider px-2 sm:px-4 hide-mobile">Merchant</th>
+                  <th className="pb-2 text-xs text-zinc-500 font-medium uppercase tracking-wider px-2 sm:px-4 hide-mobile">Date</th>
+                </tr>
+              </thead>
+              <tbody>
+                {data.recentTransactions.map((tx: any) => (
+                  <TransactionRow key={tx.id} transaction={tx} onDelete={() => {}} />
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
       )}
     </div>
