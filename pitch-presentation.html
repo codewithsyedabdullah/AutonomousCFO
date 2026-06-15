@@ -336,8 +336,8 @@ function tick() {
     const elapsed = (Date.now() - startTime) / 1000;
     timerEl.textContent = Math.floor(elapsed / 60) + ':' + (elapsed % 60 < 10 ? '0' : '') + Math.floor(elapsed % 60);
     progressEl.style.width = Math.min((elapsed / totalSec) * 100, 100) + '%';
-    for (let i = cumDur.length - 1; i >= 0; i--) {
-      if (elapsed >= cumDur[i] && currentSlide !== i) {
+    for (let i = cumDur.length - 1; i > currentSlide; i--) {
+      if (elapsed >= cumDur[i]) {
         advanceSlide(i);
         break;
       }
