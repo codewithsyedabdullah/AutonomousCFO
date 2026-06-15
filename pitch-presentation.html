@@ -292,12 +292,11 @@ const narrations = [
   "Auto CFO: your AI Financial Twin. Built for Code-Storm 26, Fintech Track. Visit autonomous-cfo dot vercel dot app. No bank APIs, no credit card, 100 percent Pakistan. Thank you."
 ];
 
-// Word-count-based timings (~3 words/sec speaking rate with buffer)
-const timings = narrations.map(n => Math.max(12, Math.ceil(n.split(' ').length / 2.5)));
-const cumulativeTimings = [];
-let sum = 0;
-for (const t of timings) { cumulativeTimings.push(sum); sum += t; }
-const totalDuration = sum;
+// Per-slide duration: word count / 2.5 wps + 2s buffer, min 10s
+const slideDur = narrations.map(n => Math.max(10, Math.ceil(n.split(' ').length / 2.5) + 2));
+const cumDur = [];
+let totalSec = 0;
+for (const d of slideDur) { cumDur.push(totalSec); totalSec += d; }
 
 function pickVoice(voices) {
   return voices.find(x => x.name === 'Google UK English Female')
@@ -308,44 +307,39 @@ function pickVoice(voices) {
       || voices.find(x => x.lang.startsWith('en'));
 }
 
-function speakSlide(index) {
-  if (index >= totalSlides) return;
-  const u = new SpeechSynthesisUtterance(narrations[index]);
-  if (voice) u.voice = voice;
-  u.rate = 1.05;
-  window.speechSynthesis.speak(u);
-}
-
-// Chrome kills speech after ~15s idle; pause/resume keeps it alive
-setInterval(() => {
-  if (window.speechSynthesis.speaking) {
-    window.speechSynthesis.pause();
-    window.speechSynthesis.resume();
+function ensureSpeaking(idx) {
+  if (!window.speechSynthesis.speaking) {
+    const u = new SpeechSynthesisUtterance(narrations[idx]);
+    if (voice) u.voice = voice;
+    u.rate = 1.05;
+    window.speechSynthesis.cancel();
+    window.speechSynthesis.speak(u);
   }
-}, 8000);
+}
 
 function advanceSlide(next) {
   window.speechSynthesis.cancel();
   slides[currentSlide].classList.remove('active');
   currentSlide = next;
   slides[currentSlide].classList.add('active');
-  speakSlide(next);
+  ensureSpeaking(next);
 }
 
-function update() {
+function tick() {
   if (!startTime) return;
   const elapsed = (Date.now() - startTime) / 1000;
   const m = Math.floor(elapsed / 60);
   const s = Math.floor(elapsed % 60);
   timerEl.textContent = m + ':' + (s < 10 ? '0' : '') + s;
-  progressEl.style.width = Math.min((elapsed / totalDuration) * 100, 100) + '%';
-  for (let i = cumulativeTimings.length - 1; i >= 0; i--) {
-    if (elapsed >= cumulativeTimings[i] && currentSlide !== i) {
+  progressEl.style.width = Math.min((elapsed / totalSec) * 100, 100) + '%';
+  for (let i = cumDur.length - 1; i >= 0; i--) {
+    if (elapsed >= cumDur[i] && currentSlide !== i) {
       advanceSlide(i);
       break;
     }
   }
-  requestAnimationFrame(update);
+  if (currentSlide < totalSlides) ensureSpeaking(currentSlide);
+  requestAnimationFrame(tick);
 }
 
 function start() {
@@ -356,8 +350,9 @@ function start() {
   overlay.style.opacity = '0';
   setTimeout(() => overlay.style.display = 'none', 600);
   startTime = Date.now();
-  speakSlide(0);
-  update();
+  slides[0].classList.add('active');
+  ensureSpeaking(0);
+  tick();
 }
 
 overlay.addEventListener('click', start);
