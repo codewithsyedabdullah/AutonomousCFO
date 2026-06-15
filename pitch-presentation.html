@@ -7,14 +7,15 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Anton&display=swap" rel="stylesheet">
 <style>
 * { margin: 0; padding: 0; box-sizing: border-box; }
-html, body { height: 100%; overflow: hidden; }
-body { font-family: 'Inter', sans-serif; background: hsl(150,20%,5%); color: hsl(45,30%,90%); }
+html, body { height: 100%; overflow: hidden; background: hsl(150,20%,5%); }
+body { font-family: 'Inter', sans-serif; color: hsl(45,30%,90%); }
 
 .slide {
-  position: absolute; top: 0; left: 0; width: 100%; height: 100dvh;
+  position: absolute; top: 0; left: 0; width: 100%; height: 100vh;
   display: flex; flex-direction: column; align-items: center; justify-content: center;
   padding: clamp(16px, 4vh, 60px) clamp(16px, 5vw, 60px);
   opacity: 0; transition: opacity 0.8s; text-align: center;
+  background: hsl(150,20%,5%);
 }
 .slide.active { opacity: 1; z-index: 10; }
 
@@ -292,8 +293,8 @@ const narrations = [
   "Auto CFO: your AI Financial Twin. Built for Code-Storm 26, Fintech Track. Visit autonomous-cfo dot vercel dot app. No bank APIs, no credit card, 100 percent Pakistan. Thank you."
 ];
 
-// Per-slide duration: word count / 2.5 wps + 2s buffer, min 10s
-const slideDur = narrations.map(n => Math.max(10, Math.ceil(n.split(' ').length / 2.5) + 2));
+// Per-slide timing: word count / 2.5 words per second, minimum 10s
+const slideDur = narrations.map(n => Math.max(10, Math.ceil(n.split(' ').length / 2.5)));
 const cumDur = [];
 let totalSec = 0;
 for (const d of slideDur) { cumDur.push(totalSec); totalSec += d; }
@@ -307,30 +308,29 @@ function pickVoice(voices) {
       || voices.find(x => x.lang.startsWith('en'));
 }
 
-function ensureSpeaking(idx) {
-  if (!window.speechSynthesis.speaking) {
-    const u = new SpeechSynthesisUtterance(narrations[idx]);
-    if (voice) u.voice = voice;
-    u.rate = 1.05;
-    window.speechSynthesis.cancel();
-    window.speechSynthesis.speak(u);
+// Chrome kills speech after ~10s idle. Pause/resume every 4s keeps it alive.
+setInterval(() => {
+  if (window.speechSynthesis.speaking) {
+    window.speechSynthesis.pause();
+    window.speechSynthesis.resume();
   }
-}
+}, 4000);
 
 function advanceSlide(next) {
   window.speechSynthesis.cancel();
   slides[currentSlide].classList.remove('active');
   currentSlide = next;
   slides[currentSlide].classList.add('active');
-  ensureSpeaking(next);
+  const u = new SpeechSynthesisUtterance(narrations[next]);
+  if (voice) u.voice = voice;
+  u.rate = 1.05;
+  window.speechSynthesis.speak(u);
 }
 
 function tick() {
   if (!startTime) return;
   const elapsed = (Date.now() - startTime) / 1000;
-  const m = Math.floor(elapsed / 60);
-  const s = Math.floor(elapsed % 60);
-  timerEl.textContent = m + ':' + (s < 10 ? '0' : '') + s;
+  timerEl.textContent = Math.floor(elapsed / 60) + ':' + (elapsed % 60 < 10 ? '0' : '') + Math.floor(elapsed % 60);
   progressEl.style.width = Math.min((elapsed / totalSec) * 100, 100) + '%';
   for (let i = cumDur.length - 1; i >= 0; i--) {
     if (elapsed >= cumDur[i] && currentSlide !== i) {
@@ -338,7 +338,6 @@ function tick() {
       break;
     }
   }
-  if (currentSlide < totalSlides) ensureSpeaking(currentSlide);
   requestAnimationFrame(tick);
 }
 
@@ -350,8 +349,7 @@ function start() {
   overlay.style.opacity = '0';
   setTimeout(() => overlay.style.display = 'none', 600);
   startTime = Date.now();
-  slides[0].classList.add('active');
-  ensureSpeaking(0);
+  advanceSlide(0);
   tick();
 }
 
