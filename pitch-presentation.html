@@ -274,13 +274,11 @@ const slides = document.querySelectorAll('.slide');
 const timerEl = document.getElementById('timer');
 const progressEl = document.getElementById('progress');
 const overlay = document.getElementById('startOverlay');
-const timings = [0, 30, 60, 90, 120, 150, 180, 210];
-const totalDuration = 210;
+const totalSlides = slides.length;
 
 let currentSlide = 0;
 let startTime = null;
 let voice = null;
-let currentUtterance = null;
 let started = false;
 
 const narrations = [
@@ -294,6 +292,13 @@ const narrations = [
   "Auto CFO: your AI Financial Twin. Built for Code-Storm 26, Fintech Track. Visit autonomous-cfo dot vercel dot app. No bank APIs, no credit card, 100 percent Pakistan. Thank you."
 ];
 
+// Word-count-based timings (~3 words/sec speaking rate with buffer)
+const timings = narrations.map(n => Math.max(12, Math.ceil(n.split(' ').length / 2.5)));
+const cumulativeTimings = [];
+let sum = 0;
+for (const t of timings) { cumulativeTimings.push(sum); sum += t; }
+const totalDuration = sum;
+
 function pickVoice(voices) {
   return voices.find(x => x.name === 'Google UK English Female')
       || voices.find(x => x.name.includes('Google UK') && x.name.includes('Female'))
@@ -304,14 +309,23 @@ function pickVoice(voices) {
 }
 
 function speakSlide(index) {
-  if (currentUtterance) window.speechSynthesis.cancel();
+  if (index >= totalSlides) return;
   const u = new SpeechSynthesisUtterance(narrations[index]);
   if (voice) u.voice = voice;
-  currentUtterance = u;
+  u.rate = 1.05;
   window.speechSynthesis.speak(u);
 }
 
+// Chrome kills speech after ~15s idle; pause/resume keeps it alive
+setInterval(() => {
+  if (window.speechSynthesis.speaking) {
+    window.speechSynthesis.pause();
+    window.speechSynthesis.resume();
+  }
+}, 8000);
+
 function advanceSlide(next) {
+  window.speechSynthesis.cancel();
   slides[currentSlide].classList.remove('active');
   currentSlide = next;
   slides[currentSlide].classList.add('active');
@@ -325,13 +339,13 @@ function update() {
   const s = Math.floor(elapsed % 60);
   timerEl.textContent = m + ':' + (s < 10 ? '0' : '') + s;
   progressEl.style.width = Math.min((elapsed / totalDuration) * 100, 100) + '%';
-  for (let i = timings.length - 1; i >= 0; i--) {
-    if (elapsed >= timings[i] && currentSlide !== i) {
+  for (let i = cumulativeTimings.length - 1; i >= 0; i--) {
+    if (elapsed >= cumulativeTimings[i] && currentSlide !== i) {
       advanceSlide(i);
       break;
     }
   }
-  if (elapsed < totalDuration) requestAnimationFrame(update);
+  requestAnimationFrame(update);
 }
 
 function start() {
