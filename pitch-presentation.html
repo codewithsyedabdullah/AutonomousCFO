@@ -308,13 +308,21 @@ function pickVoice(voices) {
       || voices.find(x => x.lang.startsWith('en'));
 }
 
-// Split narration into sentences and queue them all at once.
-// Chrome processes the queue sequentially. Each sentence is short (<10s) so Chrome never kills an utterance.
+// Split narration into ~35-word chunks (~14s each, under Chrome's 15s limit).
+// Fewer chunks = smoother audio (minimizes utterance-boundary gaps).
 function speakSlide(idx) {
   window.speechSynthesis.cancel();
-  const parts = narrations[idx].match(/[^.!?]+[.!?]+/g) || [narrations[idx]];
-  for (const p of parts) {
-    const u = new SpeechSynthesisUtterance(p.trim());
+  const sentences = narrations[idx].match(/[^.!?]+[.!?]+/g) || [narrations[idx]];
+  const chunks = [];
+  let buf = '';
+  for (const s of sentences) {
+    const combo = (buf + ' ' + s).trim();
+    if (combo.split(' ').length > 35 && buf) { chunks.push(buf.trim()); buf = s; }
+    else { buf = combo; }
+  }
+  if (buf.trim()) chunks.push(buf.trim());
+  for (const c of chunks) {
+    const u = new SpeechSynthesisUtterance(c);
     if (voice) u.voice = voice;
     u.rate = 1.05;
     window.speechSynthesis.speak(u);
