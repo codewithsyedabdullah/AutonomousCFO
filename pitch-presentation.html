@@ -293,8 +293,8 @@ const narrations = [
   "Auto CFO: your AI Financial Twin. Built for Code-Storm 26, Fintech Track. Visit autonomous-cfo dot vercel dot app. No bank APIs, no credit card, 100 percent Pakistan. Thank you."
 ];
 
-// Per-slide timing: word count / 2.5 wps, minimum 10s
-const slideDur = narrations.map(n => Math.max(10, Math.ceil(n.split(' ').length / 2.5)));
+// Per-slide timing: word count / 2.0 wps + 2s buffer, minimum 12s
+const slideDur = narrations.map(n => Math.max(12, Math.ceil(n.split(' ').length / 2.0) + 2));
 const cumDur = [];
 let totalSec = 0;
 for (const d of slideDur) { cumDur.push(totalSec); totalSec += d; }
@@ -308,19 +308,23 @@ function pickVoice(voices) {
       || voices.find(x => x.lang.startsWith('en'));
 }
 
-// Single utterance per slide. Pause/resume every 3s keeps Chrome from killing it.
-setInterval(() => {
-  if (window.speechSynthesis.speaking) {
-    window.speechSynthesis.pause();
-    window.speechSynthesis.resume();
-  }
-}, 3000);
-
+// Single utterance per slide. Watchdog detects if Chrome kills speech and re-speaks.
 function speakSlide(idx) {
   const u = new SpeechSynthesisUtterance(narrations[idx]);
   if (voice) u.voice = voice;
   u.rate = 1.05;
+  u.onend = () => { if (window._speechWatch) clearInterval(window._speechWatch); };
   window.speechSynthesis.speak(u);
+  if (window._speechWatch) clearInterval(window._speechWatch);
+  window._speechWatch = setInterval(() => {
+    if (!window.speechSynthesis.speaking && currentSlide === idx) {
+      const u2 = new SpeechSynthesisUtterance(narrations[idx]);
+      if (voice) u2.voice = voice;
+      u2.rate = 1.05;
+      u2.onend = () => { if (window._speechWatch) clearInterval(window._speechWatch); };
+      window.speechSynthesis.speak(u2);
+    }
+  }, 2000);
 }
 
 function advanceSlide(next) {
