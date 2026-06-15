@@ -293,9 +293,6 @@ const narrations = [
   "Auto CFO: your AI Financial Twin. Built for Code-Storm 26, Fintech Track. Visit autonomous-cfo dot vercel dot app. No bank APIs, no credit card, 100 percent Pakistan. Thank you."
 ];
 
-// Split into short sentences so Chrome never kills an utterance
-const sentences = narrations.map(n => (n.match(/[^.!?]+[.!?]+/g) || [n]).map(s => s.trim()));
-
 // Per-slide timing: word count / 2.5 wps, minimum 10s
 const slideDur = narrations.map(n => Math.max(10, Math.ceil(n.split(' ').length / 2.5)));
 const cumDur = [];
@@ -311,34 +308,40 @@ function pickVoice(voices) {
       || voices.find(x => x.lang.startsWith('en'));
 }
 
-function speakSentences(idx, pos) {
-  if (!sentences[idx] || pos >= sentences[idx].length) return;
-  const u = new SpeechSynthesisUtterance(sentences[idx][pos]);
-  if (voice) u.voice = voice;
-  u.rate = 1.05;
-  u.onend = () => speakSentences(idx, pos + 1);
-  window.speechSynthesis.speak(u);
-}
+// Keep Chrome's speech alive with aggressive pause/resume every 2s
+setInterval(() => {
+  if (window.speechSynthesis.speaking) {
+    window.speechSynthesis.pause();
+    window.speechSynthesis.resume();
+  }
+}, 2000);
 
 function advanceSlide(next) {
   window.speechSynthesis.cancel();
-  slides[currentSlide].classList.remove('active');
+  slides.forEach((s, i) => {
+    s.classList.toggle('active', i === next);
+    s.style.display = i === next ? 'flex' : 'none';
+  });
   currentSlide = next;
-  slides[currentSlide].classList.add('active');
-  speakSentences(next, 0);
+  const u = new SpeechSynthesisUtterance(narrations[next]);
+  if (voice) u.voice = voice;
+  u.rate = 1.05;
+  window.speechSynthesis.speak(u);
 }
 
 function tick() {
-  if (!startTime) return;
-  const elapsed = (Date.now() - startTime) / 1000;
-  timerEl.textContent = Math.floor(elapsed / 60) + ':' + (elapsed % 60 < 10 ? '0' : '') + Math.floor(elapsed % 60);
-  progressEl.style.width = Math.min((elapsed / totalSec) * 100, 100) + '%';
-  for (let i = cumDur.length - 1; i >= 0; i--) {
-    if (elapsed >= cumDur[i] && currentSlide !== i) {
-      advanceSlide(i);
-      break;
+  try {
+    if (!startTime) return;
+    const elapsed = (Date.now() - startTime) / 1000;
+    timerEl.textContent = Math.floor(elapsed / 60) + ':' + (elapsed % 60 < 10 ? '0' : '') + Math.floor(elapsed % 60);
+    progressEl.style.width = Math.min((elapsed / totalSec) * 100, 100) + '%';
+    for (let i = cumDur.length - 1; i >= 0; i--) {
+      if (elapsed >= cumDur[i] && currentSlide !== i) {
+        advanceSlide(i);
+        break;
+      }
     }
-  }
+  } catch (e) { console.error(e); }
   requestAnimationFrame(tick);
 }
 
