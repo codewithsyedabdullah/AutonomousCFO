@@ -308,28 +308,23 @@ function pickVoice(voices) {
       || voices.find(x => x.lang.startsWith('en'));
 }
 
-// Split narration into ~35-word chunks (~14s each, under Chrome's 15s limit).
-// Fewer chunks = smoother audio (minimizes utterance-boundary gaps).
+// Single utterance per slide. Pause/resume every 3s keeps Chrome from killing it.
+setInterval(() => {
+  if (window.speechSynthesis.speaking) {
+    window.speechSynthesis.pause();
+    window.speechSynthesis.resume();
+  }
+}, 3000);
+
 function speakSlide(idx) {
-  window.speechSynthesis.cancel();
-  const sentences = narrations[idx].match(/[^.!?]+[.!?]+/g) || [narrations[idx]];
-  const chunks = [];
-  let buf = '';
-  for (const s of sentences) {
-    const combo = (buf + ' ' + s).trim();
-    if (combo.split(' ').length > 35 && buf) { chunks.push(buf.trim()); buf = s; }
-    else { buf = combo; }
-  }
-  if (buf.trim()) chunks.push(buf.trim());
-  for (const c of chunks) {
-    const u = new SpeechSynthesisUtterance(c);
-    if (voice) u.voice = voice;
-    u.rate = 1.05;
-    window.speechSynthesis.speak(u);
-  }
+  const u = new SpeechSynthesisUtterance(narrations[idx]);
+  if (voice) u.voice = voice;
+  u.rate = 1.05;
+  window.speechSynthesis.speak(u);
 }
 
 function advanceSlide(next) {
+  window.speechSynthesis.cancel();
   slides.forEach((s, i) => {
     s.classList.toggle('active', i === next);
     s.style.display = i === next ? 'flex' : 'none';
