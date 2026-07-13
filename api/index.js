@@ -1,1 +1,1 @@
-module.exports = require('../backend/dist/index');
+module.exports = require('../backend/dist/index').default;
