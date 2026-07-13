@@ -25,13 +25,13 @@ app.use(express.json({ limit: '10mb' }));
 
 app.get('/api/health', (_req, res) => res.json({ status: 'ok', timestamp: new Date().toISOString() }));
 
-app.use('/auth', authRoutes);
-app.use('/transactions', transactionRoutes);
-app.use('/goals', goalRoutes);
-app.use('/dashboard', dashboardRoutes);
-app.use('/simulator', simulatorRoutes);
-app.use('/chat', chatRoutes);
-app.use('/tax', taxRoutes);
+app.use('/api/auth', authRoutes);
+app.use('/api/transactions', transactionRoutes);
+app.use('/api/goals', goalRoutes);
+app.use('/api/dashboard', dashboardRoutes);
+app.use('/api/simulator', simulatorRoutes);
+app.use('/api/chat', chatRoutes);
+app.use('/api/tax', taxRoutes);
 
 app.use((err: any, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
   console.error('Unhandled error:', err);
