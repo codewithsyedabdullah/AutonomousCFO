@@ -1,20 +1,20 @@
 services:
   - type: web
     name: autocfo-backend
-    env: node
-    region: ohio
+    runtime: node
+    repo: https://github.com/codewithsyedabdullah/AutonomousCFO
+    plan: free
+    region: oregon
     buildCommand: cd backend && npm install && npm run build
-    startCommand: cd backend && npm start
+    startCommand: cd backend && node dist/index.js
     healthCheckPath: /api/health
     envVars:
+      - key: PORT
+        value: "10000"
       - key: JWT_SECRET
         generateValue: true
-      - key: PORT
-        value: "3001"
       - key: CORS_ORIGIN
         value: https://autocfo.vercel.app
-      - key: AI_API_KEY
-        sync: false
       - key: AI_API_TYPE
         value: openai
       - key: AI_API_BASE_URL
@@ -22,4 +22,14 @@ services:
       - key: AI_MODEL
         value: llama-3.3-70b-versatile
       - key: DATABASE_URL
-        value: /data/autocfo.db
+        fromDatabase:
+          name: autocfo-db
+          property: connectionString
+      - key: AI_API_KEY
+        sync: false
+
+databases:
+  - name: autocfo-db
+    plan: free
+    region: oregon
+    postgresMajorVersion: 16
