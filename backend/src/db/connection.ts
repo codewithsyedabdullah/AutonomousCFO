@@ -4,7 +4,11 @@ import { config } from '../config';
 let pool: Pool | null = null;
 
 export async function initDb(): Promise<void> {
-  pool = new Pool({ connectionString: config.DATABASE_URL, max: 10 });
+  pool = new Pool({
+    connectionString: config.DATABASE_URL,
+    max: 10,
+    ssl: { rejectUnauthorized: false },
+  });
   const client = await pool.connect();
   client.release();
 }
@@ -12,7 +16,7 @@ export async function initDb(): Promise<void> {
 function convertParams(sql: string, params: any[]): { text: string; values: any[] } {
   if (params.length === 0) return { text: sql, values: [] };
   let i = 0;
-  const text = sql.replace(/\?/g, () => `$${++i}`);
+  const text = sql.replace(/\?/g, () => $);
   return { text, values: params };
 }
 
