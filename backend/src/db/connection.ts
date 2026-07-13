@@ -16,7 +16,7 @@ export async function initDb(): Promise<void> {
 function convertParams(sql: string, params: any[]): { text: string; values: any[] } {
   if (params.length === 0) return { text: sql, values: [] };
   let i = 0;
-  const text = sql.replace(/\?/g, () => $);
+  const text = sql.replace(/\?/g, () => `${i++}`);
   return { text, values: params };
 }
 

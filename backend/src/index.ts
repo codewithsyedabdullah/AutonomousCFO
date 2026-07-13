@@ -38,8 +38,17 @@ app.use((err: any, _req: express.Request, res: express.Response, _next: express.
   res.status(500).json({ error: 'Internal server error' });
 });
 
-// Init DB on every cold start (Vercel serverless) or at startup (local)
-initDb().then(() => initSchema()).catch(err => console.error('DB init failed:', err));
+// Init DB on every cold start — store promise so middleware can await it
+const dbReady = initDb().then(() => initSchema());
+dbReady.catch(err => console.error('DB init failed:', err));
+
+// Middleware that waits for DB/schema init before handling requests
+app.use((_req, _res, next) => {
+  dbReady.then(() => next()).catch(err => {
+    console.error('DB init failed:', err);
+    _res.status(500).json({ error: 'Database initialization failed' });
+  });
+});
 
 if (!process.env.VERCEL) {
   app.listen(config.PORT, () => {
