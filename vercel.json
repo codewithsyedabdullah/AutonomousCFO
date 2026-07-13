@@ -1,5 +1,5 @@
 {
-  "buildCommand": "./node_modules/.bin/tsc -p backend/tsconfig.json && cd frontend && npm install --include=dev && npm run build",
+  "buildCommand": "node ./node_modules/typescript/bin/tsc -p backend/tsconfig.json && cd frontend && npm install --include=dev && npm run build",
   "outputDirectory": "frontend/dist",
   "rewrites": [
     { "source": "/api/(.*)", "destination": "/api" },
