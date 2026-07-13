@@ -38,17 +38,12 @@ app.use((err: any, _req: express.Request, res: express.Response, _next: express.
   res.status(500).json({ error: 'Internal server error' });
 });
 
+// Init DB on every cold start (Vercel serverless) or at startup (local)
+initDb().then(() => initSchema()).catch(err => console.error('DB init failed:', err));
+
 if (!process.env.VERCEL) {
-  async function start() {
-    await initDb();
-    await initSchema();
-    app.listen(config.PORT, () => {
-      console.log('AutoCFO backend running on http://localhost:' + config.PORT);
-    });
-  }
-  start().catch((err) => {
-    console.error('Failed to start server:', err);
-    process.exit(1);
+  app.listen(config.PORT, () => {
+    console.log('AutoCFO backend running on http://localhost:' + config.PORT);
   });
 }
 

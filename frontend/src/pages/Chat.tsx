@@ -32,7 +32,7 @@ export default function Chat() {
 
     try {
       const token = localStorage.getItem('token');
-      const baseUrl = import.meta.env.VITE_API_URL || '';
+      const baseUrl = import.meta.env.VITE_API_URL || '/api';
       const res = await fetch(`${baseUrl}/chat`, {
         method: 'POST',
         headers: {
