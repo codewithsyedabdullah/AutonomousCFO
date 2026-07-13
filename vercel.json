@@ -1,12 +1,12 @@
 {
-  "buildCommand": "cd frontend && npm install --include=dev && npm run build",
+  "buildCommand": "./node_modules/.bin/tsc -p backend/tsconfig.json && cd frontend && npm install --include=dev && npm run build",
   "outputDirectory": "frontend/dist",
   "rewrites": [
     { "source": "/api/(.*)", "destination": "/api" },
     { "source": "/(.*)", "destination": "/index.html" }
   ],
   "functions": {
-    "api/index.ts": {
+    "api/index.js": {
       "memory": 256,
       "maxDuration": 30
     }
