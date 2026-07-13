@@ -1,6 +1,10 @@
 {
   "buildCommand": "cd frontend && npm install --include=dev && npm run build",
   "outputDirectory": "frontend/dist",
+  "builds": [
+    { "src": "api/**/*.js", "use": "@vercel/node" },
+    { "src": "frontend/dist/**", "use": "@vercel/static" }
+  ],
   "rewrites": [
     { "source": "/api/test", "destination": "/api/test" },
     { "source": "/api/(.*)", "destination": "/api" },
