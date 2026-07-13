@@ -14,11 +14,11 @@ const DATABASE_URL = process.env.DATABASE_URL || 'postgresql://localhost:5432/au
 let pool;
 
 async function initDb() {
-  pool = new Pool({ connectionString: DATABASE_URL, max: 10, ssl: { rejectUnauthorized: false } });
-  await Promise.race([
-    pool.query('SELECT 1'),
-    new Promise((_, reject) => setTimeout(() => reject(new Error('DB connection timeout')), 10000))
-  ]);
+  const { Client } = require('pg');
+  const client = new Client({ connectionString: DATABASE_URL, connectionTimeoutMillis: 25000 });
+  await client.connect();
+  await client.end();
+  pool = new Pool({ connectionString: DATABASE_URL, max: 10, connectionTimeoutMillis: 25000 });
 }
 
 function convertParams(sql, params) {
