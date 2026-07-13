@@ -27,7 +27,6 @@ export default function Chat() {
     setInput('');
     setLoading(true);
     setError('');
-    assistantContent.current = '';
 
     try {
       const token = localStorage.getItem('token');
