@@ -14,7 +14,6 @@ export default function Chat() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const bottomRef = useRef<HTMLDivElement>(null);
-  const assistantContent = useRef('');
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -47,50 +46,9 @@ export default function Chat() {
         throw new Error(errData.error || 'Chat request failed');
       }
 
-      const reader = res.body?.getReader();
-      if (!reader) throw new Error('No response stream');
-
-      setMessages((prev) => [...prev, { role: 'assistant', content: '' }]);
-
-      const decoder = new TextDecoder();
-      let buffer = '';
-
-      while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
-
-        buffer += decoder.decode(value, { stream: true });
-        const lines = buffer.split('\n');
-        buffer = lines.pop() || '';
-
-        for (const line of lines) {
-          if (line.startsWith('data: ')) {
-            const data = line.slice(6).trim();
-            if (data === '[DONE]') continue;
-            try {
-              const parsed = JSON.parse(data);
-              const content = parsed.choices?.[0]?.delta?.content || parsed.content || '';
-              if (content) {
-                assistantContent.current += content;
-                setMessages((prev) => {
-                  const updated = prev.slice(0, -1);
-                  updated.push({ role: 'assistant', content: assistantContent.current });
-                  return updated;
-                });
-              }
-            } catch {
-              if (data) {
-                assistantContent.current += data;
-                setMessages((prev) => {
-                  const updated = prev.slice(0, -1);
-                  updated.push({ role: 'assistant', content: assistantContent.current });
-                  return updated;
-                });
-              }
-            }
-          }
-        }
-      }
+      const data = await res.json();
+      const reply = data.response || 'No response';
+      setMessages((prev) => [...prev, { role: 'assistant', content: reply }]);
     } catch (err: any) {
       setError(err.message || 'Failed to get response');
       setMessages((prev) => prev.slice(0, -1));
