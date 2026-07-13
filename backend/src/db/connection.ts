@@ -8,6 +8,7 @@ export async function initDb(): Promise<void> {
     connectionString: config.DATABASE_URL,
     max: 10,
     ssl: { rejectUnauthorized: false },
+    connectionTimeoutMillis: 10000,
   });
   const client = await pool.connect();
   client.release();
